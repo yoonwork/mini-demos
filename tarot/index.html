@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>고요서재 · 타로 리딩 주문과 리딩 작업실 (제안용 데모)</title>
+<meta name="description" content="질문 입력·결제부터 카드 9장 추출·기록, AI 초안 검수, PDF 리포트까지 이어지는 흐름을 보여 주는 제안용 데모예요.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235B4A82'/%3E%3Cpath d='M20 8a9 9 0 1 0 4 14 7 7 0 0 1-4-14z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style id="tokens">
+:root{
+  color-scheme: light;
+  /* 고객 요청 색: 크림 + 차분한 보라 (형광·그라데이션 없이 한 가지만) */
+  --brand:#5B4A82; --brand-hover:#4C3D6E; --brand-press:#3E3159; --brand-text:#4C3D6E;
+  --brand-tint:#F1EEF7; --brand-tint-2:#DDD6EC; --ring:0 0 0 3px rgba(91,74,130,.25); --on-brand:#FFFFFF;
+  --bg:#F5F2EC; --card:#FFFFFF; --soft:#FAF8F4; --track:#ECE8E1; --line:#E4DFD6; --line-2:#ECE8E1;
+  --ink:#1F1D24; --ink-2:#4F4B57; --mut:#67626F; --mut-2:#A39EA8;
+  --ok:#127A4F; --ok-bg:#E3F6ED; --ok-dot:#1FA971;
+  --warn:#7A5600; --warn-bg:#FFF3D4; --warn-dot:#F2B01E;
+  --bad:#BF2930; --bad-bg:#FFE3E4; --bad-dot:#E5484D;
+  --info:#175CD3; --info-bg:#EAF2FF; --info-dot:#2E7CF6;
+  --neu:#4F4B57; --neu-bg:#EFECE7; --neu-dot:#8E8995;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --fs-12:12px; --fs-13:13px; --fs-14:14px; --fs-15:15px; --fs-17:17px; --fs-20:20px; --fs-24:24px; --fs-32:32px; --fs-44:44px;
+  --lh-tight:1.3; --lh-body:1.6;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px; --sp-12:48px; --sp-16:64px;
+  --r-sm:8px; --r-md:12px; --r-lg:20px; --r-xl:28px; --r-pill:999px;
+  --sh-pill:0 1px 2px rgba(16,24,40,.08);
+  --sh-pop:0 2px 6px rgba(16,24,40,.06),0 12px 32px rgba(16,24,40,.12);
+  --h-sm:32px; --h-md:40px; --h-lg:48px; --h-cta:52px; --container:1200px;
+}
+</style>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:var(--fs-15);line-height:var(--lh-body);word-break:keep-all;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:calc(var(--container) + 48px);margin:0 auto;padding:0 var(--sp-6)}
+@media (max-width:640px){.wrap{padding:0 var(--sp-4)}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition:none!important}}
+
+.demo-band{background:var(--ink);color:#fff;font-size:var(--fs-13);text-align:center;padding:8px 16px;line-height:1.5}
+.demo-band b{font-weight:700;margin-right:6px}
+.top{padding-top:var(--sp-4)}
+.topbar{display:flex;align-items:center;gap:var(--sp-3);background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-pill);padding:8px 8px 8px 20px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:var(--fs-17);letter-spacing:-.02em;white-space:nowrap}
+.mark{width:28px;height:28px;border-radius:9px;background:var(--brand);display:grid;place-items:center;flex:none}
+.mark svg{width:16px;height:16px;fill:#fff}
+.pnav{display:flex;gap:2px;background:var(--track);border-radius:var(--r-pill);padding:4px;margin-left:auto}
+.pnav button{border:0;background:none;padding:0 18px;height:40px;border-radius:var(--r-pill);color:var(--ink-2);font-size:var(--fs-14);font-weight:500;white-space:nowrap}
+.pnav button[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--sh-pill)}
+@media (max-width:640px){.topbar{flex-wrap:wrap;border-radius:var(--r-lg);padding:12px 8px 8px 16px}.pnav{order:3;width:100%;margin:0}.pnav button{flex:1;height:44px;padding:0 8px}}
+
+.card{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-lg);padding:var(--sp-6);min-width:0}
+@media (max-width:640px){.card{padding:var(--sp-5)}}
+.btn{--h:var(--h-md);display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--h);padding:0 16px;border-radius:var(--r-pill);border:1px solid transparent;font-size:var(--fs-14);font-weight:600;line-height:1;white-space:nowrap;transition:background-color .15s,border-color .15s,color .15s}
+.btn-lg{--h:var(--h-lg);padding:0 22px;font-size:var(--fs-15)}
+.btn-primary{background:var(--brand);color:var(--on-brand)}
+.btn-primary:hover{background:var(--brand-hover)}
+.btn-primary:active{background:var(--brand-press)}
+.btn-secondary{background:var(--card);border-color:var(--line);color:var(--ink)}
+.btn-secondary:hover{background:var(--soft);border-color:#D6D0C5}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--track);color:var(--ink)}
+.btn:disabled{background:var(--track);border-color:transparent;color:var(--mut-2);cursor:not-allowed}
+.btn-cta{--h:var(--h-cta);width:100%;border-radius:var(--r-md);font-size:var(--fs-17)}
+.btn .ic{width:18px;height:18px}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px 0 9px;border-radius:var(--r-pill);font-size:var(--fs-12);font-weight:600;white-space:nowrap;line-height:1}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;flex:none}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.ok::before{background:var(--ok-dot)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.warn::before{background:var(--warn-dot)}
+.chip.info{background:var(--info-bg);color:var(--info)}.chip.info::before{background:var(--info-dot)}
+.chip.neu{background:var(--neu-bg);color:var(--neu)}.chip.neu::before{background:var(--neu-dot)}
+.tag{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;background:var(--soft);border:1px solid var(--line-2);font-size:var(--fs-12);font-weight:500;color:var(--ink-2);white-space:nowrap}
+
+/* 폼 */
+.field{display:grid;gap:var(--sp-2);min-width:0}
+.label{font-size:var(--fs-14);font-weight:600}
+.label .req{color:var(--bad);margin-left:2px}
+.label .opt{color:var(--mut);font-weight:400;margin-left:4px}
+.input{height:var(--h-lg);width:100%;border:1px solid var(--line);border-radius:var(--r-md);padding:0 14px;font-size:var(--fs-15);background:var(--card);color:var(--ink);transition:border-color .15s,box-shadow .15s}
+.input::placeholder{color:var(--mut-2)}
+.input:focus{outline:0;border-color:var(--brand);box-shadow:var(--ring)}
+.input[aria-invalid="true"]{border-color:var(--bad-dot)}
+textarea.input{height:auto;min-height:112px;padding:12px 14px;resize:vertical;line-height:var(--lh-body)}
+.help{font-size:var(--fs-13);color:var(--mut);display:flex;justify-content:space-between;gap:var(--sp-2)}
+.err{font-size:var(--fs-13);color:var(--bad);font-weight:500}
+.rchips{display:flex;gap:var(--sp-2);flex-wrap:wrap;border:0;margin:0;padding:0;min-width:0}
+.rc{position:relative}
+.rc input{position:absolute;opacity:0;width:1px;height:1px}
+.rc span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:var(--r-pill);font-size:var(--fs-14);font-weight:500;color:var(--ink-2);background:var(--card);cursor:pointer;white-space:nowrap}
+.rc input:checked+span{border-color:var(--brand);background:var(--brand-tint);color:var(--brand-text);font-weight:600}
+.rc input:focus-visible+span{box-shadow:var(--ring)}
+
+/* ===== 고객 화면 ===== */
+.c-hero{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:var(--sp-8);margin:var(--sp-12) 0 var(--sp-10);align-items:end}
+.c-hero h1{font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1.15}
+.c-hero p{font-size:var(--fs-17);color:var(--ink-2);max-width:480px}
+.c-hero .facts{display:flex;gap:var(--sp-6);margin-top:var(--sp-5);flex-wrap:wrap}
+.c-hero .facts div{display:grid}
+.c-hero .facts b{font-size:var(--fs-32);font-weight:800;letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums}
+.c-hero .facts span{font-size:var(--fs-13);color:var(--mut)}
+@media (max-width:900px){.c-hero{grid-template-columns:1fr;gap:var(--sp-4);margin:var(--sp-8) 0 var(--sp-6)}.c-hero h1{font-size:32px}.c-hero p{font-size:var(--fs-15)}.c-hero .facts b{font-size:var(--fs-24)}}
+.order{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--sp-4);align-items:start}
+@media (max-width:900px){.order{grid-template-columns:1fr}}
+.stepper{display:flex;gap:var(--sp-2);margin-bottom:var(--sp-6);flex-wrap:wrap}
+.stepper li{display:flex;align-items:center;gap:6px;font-size:var(--fs-13);color:var(--mut);font-weight:500}
+.stepper li .d{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:var(--fs-12);font-weight:700;font-variant-numeric:tabular-nums;background:var(--card)}
+.stepper li[aria-current="step"]{color:var(--ink);font-weight:700}
+.stepper li[aria-current="step"] .d{background:var(--brand);border-color:var(--brand);color:#fff}
+.stepper li.done .d{background:var(--brand-tint);border-color:var(--brand-tint-2);color:var(--brand-text)}
+.stepper li+li::before{content:"";width:16px;height:1px;background:var(--line);margin-right:4px}
+.step h2{font-size:var(--fs-24);font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.step>p{color:var(--ink-2);margin-bottom:var(--sp-5)}
+.step .form{display:grid;gap:var(--sp-5)}
+.prods{display:grid;gap:var(--sp-3)}
+.prod{position:relative;display:block}
+.prod input{position:absolute;opacity:0;width:1px;height:1px}
+.prod .box{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:var(--sp-4) var(--sp-5);border:1px solid var(--line);border-radius:var(--r-md);cursor:pointer;background:var(--card)}
+.prod .box b{font-size:var(--fs-17);font-weight:700}
+.prod .box .pr{font-size:var(--fs-20);font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+.prod .box .pr small{font-size:var(--fs-14);color:var(--mut);font-weight:500}
+.prod .box p{grid-column:1/-1;font-size:var(--fs-13);color:var(--mut)}
+.prod input:checked+.box{border-color:var(--brand);background:var(--brand-tint);box-shadow:inset 0 0 0 1px var(--brand)}
+.prod input:focus-visible+.box{box-shadow:var(--ring)}
+.step-nav{display:flex;justify-content:flex-end;gap:var(--sp-2);margin-top:var(--sp-6);padding-top:var(--sp-5);border-top:1px solid var(--line-2)}
+.step-nav .btn-primary{min-width:200px}
+@media (max-width:640px){.step-nav .btn{flex:1;min-width:0}.step-nav .btn-primary{flex:2}.stepper{flex-wrap:nowrap}.stepper li:not([aria-current]) .lb{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
+.summary{display:grid;gap:var(--sp-3)}
+.summary h3{font-size:var(--fs-17);font-weight:700}
+.dl{margin:0}
+.dl div{display:flex;justify-content:space-between;gap:var(--sp-3);padding:10px 0;border-bottom:1px solid var(--line-2);font-size:var(--fs-14)}
+.dl div:last-child{border-bottom:0}
+.dl dt{color:var(--ink-2);flex:none}
+.dl dd{margin:0;font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
+.total{display:flex;justify-content:space-between;align-items:baseline;padding-top:var(--sp-3);border-top:1px solid var(--line)}
+.total b{font-size:var(--fs-32);font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.total b small{font-size:var(--fs-15);color:var(--mut);font-weight:600;margin-left:2px}
+.note{font-size:var(--fs-13);color:var(--mut);background:var(--soft);border:1px solid var(--line-2);border-radius:var(--r-md);padding:12px 14px}
+.paid{display:grid;gap:var(--sp-4)}
+.paid h2{font-size:var(--fs-24);font-weight:800}
+.paid .ono{font-size:var(--fs-32);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+@media (min-width:901px){.order .summary{position:sticky;top:16px}}
+
+/* ===== 작업실 ===== */
+.w-head{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--sp-4);flex-wrap:wrap;margin:var(--sp-10) 0 var(--sp-5)}
+.w-head h1{font-size:var(--fs-32);font-weight:800;letter-spacing:-.03em}
+.w-head p{color:var(--ink-2);margin-top:6px;max-width:640px}
+.work{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:var(--sp-4);align-items:start}
+@media (max-width:1023px){.work{grid-template-columns:1fr}}
+.olist{padding:var(--sp-2)}
+.olist h2{font-size:var(--fs-15);font-weight:700;padding:var(--sp-3) var(--sp-3) var(--sp-2)}
+.oitem{width:100%;text-align:left;border:0;background:none;border-radius:var(--r-md);padding:var(--sp-3);display:grid;gap:4px;border:1px solid transparent}
+.oitem:hover{background:var(--soft)}
+.oitem[aria-current="true"]{background:var(--brand-tint);border-color:var(--brand-tint-2)}
+.oitem .r1{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2)}
+.oitem .no{font-weight:700;font-variant-numeric:tabular-nums;font-size:var(--fs-14);white-space:nowrap}
+.oitem .q{font-size:var(--fs-13);color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.oitem .m{font-size:var(--fs-12);color:var(--mut)}
+@media (max-width:1023px){.olist{display:flex;gap:var(--sp-2);overflow-x:auto;scrollbar-width:none;padding:var(--sp-2)}.olist::-webkit-scrollbar{display:none}.olist h2{display:none}.oitem{flex:none;width:240px;border-color:var(--line-2)}}
+.detail{display:grid;gap:var(--sp-4)}
+.qbox{display:grid;gap:var(--sp-3)}
+.qbox .r1{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2);flex-wrap:wrap}
+.qbox h2{font-size:var(--fs-20);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.qbox blockquote{margin:0;font-size:var(--fs-17);font-weight:600;line-height:1.55;padding-left:var(--sp-4);border-left:3px solid var(--brand-tint-2)}
+.qbox .story{font-size:var(--fs-14);color:var(--ink-2)}
+.qbox .meta{display:flex;gap:6px;flex-wrap:wrap}
+.blk{display:grid;gap:var(--sp-4)}
+.blk-h{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-3);flex-wrap:wrap}
+.blk-h h3{font-size:var(--fs-17);font-weight:700}
+.blk-h p{font-size:var(--fs-13);color:var(--mut);margin-top:2px}
+.spread{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3)}
+.slot{display:grid;gap:6px;text-align:center}
+.slot .pos{font-size:var(--fs-12);color:var(--mut);font-weight:600}
+.tcard{perspective:800px;aspect-ratio:2/3;width:100%;justify-self:center;max-width:124px}
+.tcard .in{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}
+.tcard.on .in{transform:rotateY(180deg)}
+.tcard .face,.tcard .back{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.tcard .back{background:var(--brand);display:grid;place-items:center;border:1px solid var(--brand-press)}
+.tcard .back svg{width:34%;height:auto;fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.4}
+.tcard .back::after{content:"";position:absolute;inset:6px;border:1px solid rgba(255,255,255,.35);border-radius:8px}
+.tcard .face{transform:rotateY(180deg);background:var(--card);border:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;padding:8px 6px;color:var(--ink)}
+.tcard .face .n{font-size:var(--fs-12);color:var(--mut);font-weight:600;font-variant-numeric:tabular-nums}
+.tcard .face svg{width:46%;margin:auto;fill:none;stroke:var(--brand);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tcard.rev .face svg{transform:rotate(180deg)}
+.tcard .face .nm{font-size:var(--fs-13);font-weight:700;line-height:1.3}
+.slot .ori{font-size:var(--fs-12);color:var(--ink-2);font-weight:600;min-height:18px}
+.record{font-size:var(--fs-13);color:var(--ink-2);background:var(--soft);border:1px solid var(--line-2);border-radius:var(--r-md);padding:12px 14px;display:grid;gap:2px}
+.record b{color:var(--ink)}
+.record code{font-family:var(--mono);font-size:var(--fs-12)}
+textarea.draft{min-height:300px;font-size:var(--fs-15)}
+.badge-ai{font-size:var(--fs-12);color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:4px 8px;font-weight:600}
+.acts{display:flex;gap:var(--sp-2);flex-wrap:wrap}
+@media (max-width:640px){.spread{gap:var(--sp-2)}.tcard .face .nm{font-size:var(--fs-12)}.acts .btn{flex:1}}
+
+/* 리포트 미리보기 */
+.scrim{position:fixed;inset:0;background:rgba(20,17,26,.5);z-index:40;overflow:auto;padding:var(--sp-6) var(--sp-4)}
+.rp-wrap{max-width:720px;margin:0 auto;display:grid;gap:var(--sp-3)}
+.rp-bar{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2);flex-wrap:wrap;background:var(--card);border-radius:var(--r-md);padding:8px 8px 8px 16px}
+.rp-bar b{font-size:var(--fs-14)}
+.report{background:#FFFDF9;color:var(--ink);border-radius:6px;box-shadow:var(--sh-pop);padding:56px 56px 48px;display:grid;gap:var(--sp-6)}
+.report .rh{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--sp-4);padding-bottom:var(--sp-5);border-bottom:1px solid var(--line)}
+.report .rh .bn{font-weight:800;letter-spacing:-.02em;display:flex;gap:8px;align-items:center}
+.report .rh small{font-size:var(--fs-12);color:var(--mut);text-align:right}
+.report h2{font-size:var(--fs-32);font-weight:800;letter-spacing:-.03em;line-height:1.25}
+.report .rq{font-size:var(--fs-17);color:var(--ink-2)}
+.report .rgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.report .rgrid div{border:1px solid var(--line);border-radius:8px;padding:10px;font-size:var(--fs-13)}
+.report .rgrid span{display:block;color:var(--mut);font-size:var(--fs-12)}
+.report .rgrid b{font-size:var(--fs-14)}
+.report .rbody{font-size:var(--fs-15);line-height:1.8;white-space:pre-wrap}
+.report .rfoot{font-size:var(--fs-12);color:var(--mut);border-top:1px solid var(--line);padding-top:var(--sp-4)}
+@media (max-width:640px){.report{padding:28px 20px}.report h2{font-size:var(--fs-24)}}
+@media print{
+  body{background:#fff}
+  body>*:not(#rpScrim){display:none!important}
+  #rpScrim{position:static;background:none;padding:0;overflow:visible}
+  .rp-bar{display:none}
+  .report{box-shadow:none;padding:0}
+}
+
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:var(--r-md);padding:12px 14px;font-size:var(--fs-14);box-shadow:var(--sh-pop)}
+.toast-live{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,16px);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;width:max-content;max-width:calc(100% - 32px)}
+.toast-live.on{opacity:1;transform:translate(-50%,0)}
+footer{margin-top:var(--sp-16);padding:var(--sp-8) 0 var(--sp-12);border-top:1px solid var(--line);font-size:var(--fs-13);color:var(--mut)}
+footer .wrap{display:grid;gap:6px}
+footer b{color:var(--ink-2)}
+</style>
+</head>
+<body>
+<div class="demo-band" role="note"><b>제안용 데모 · 예시</b>가상 브랜드 '고요서재'예요. 결제는 되지 않고, AI 초안은 미리 써 둔 문장을 조합한 예시예요.</div>
+
+<header class="top wrap">
+  <div class="topbar">
+    <span class="logo"><span class="mark"><svg viewBox="0 0 16 16"><path d="M10 2.5a6 6 0 1 0 3 9.5 4.6 4.6 0 0 1-3-9.5z"/></svg></span>고요서재</span>
+    <div class="pnav" role="tablist" aria-label="화면 고르기">
+      <button type="button" role="tab" id="t-cust" aria-controls="v-cust" aria-selected="true">고객 화면</button>
+      <button type="button" role="tab" id="t-work" aria-controls="v-work" aria-selected="false">리딩 작업실 (운영자)</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- 고객 화면 -->
+  <section id="v-cust" role="tabpanel" aria-labelledby="t-cust">
+    <div class="c-hero">
+      <h1>말하지 못한 질문,<br>카드 아홉 장으로<br>읽어 드려요</h1>
+      <div>
+        <p>고민을 적어 주시면 결제가 확인된 뒤 카드 아홉 장을 뽑고, 그 카드로 쓴 리딩을 운영자가 한 번 더 읽고 다듬어 PDF로 보내 드려요.</p>
+        <div class="facts">
+          <div><b>9장</b><span>78장 중 겹치지 않게</span></div>
+          <div><b>1번</b><span>주문마다 한 번만 뽑아요</span></div>
+          <div><b>PDF</b><span>메일로 받아요</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order">
+      <div class="card">
+        <ol class="stepper" id="stepper" aria-label="주문 단계">
+          <li data-s="1" aria-current="step"><span class="d">1</span><span class="lb">고민 분야</span></li>
+          <li data-s="2"><span class="d">2</span><span class="lb">질문</span></li>
+          <li data-s="3"><span class="d">3</span><span class="lb">리딩 고르기</span></li>
+          <li data-s="4"><span class="d">4</span><span class="lb">결제</span></li>
+        </ol>
+
+        <div class="step" data-step="1">
+          <h2>어떤 고민인가요?</h2>
+          <p>가장 가까운 것 하나를 골라 주세요. 리딩의 말투와 배열 해석이 조금 달라져요.</p>
+          <fieldset class="rchips" id="topics" aria-label="고민 분야"></fieldset>
+          <p class="err" id="e-topic" hidden style="margin-top:8px">고민 분야를 하나 골라 주세요</p>
+        </div>
+
+        <div class="step" data-step="2" hidden>
+          <h2>질문을 적어 주세요</h2>
+          <p>'예/아니오'보다 '어떻게 하면 ~할까요'로 물으면 더 깊게 읽을 수 있어요.</p>
+          <div class="form">
+            <div class="field">
+              <label class="label" for="qText">질문<span class="req" aria-hidden="true">*</span></label>
+              <textarea class="input" id="qText" maxlength="200" placeholder="예: 지금 하는 일을 계속하면서 새 공부를 시작해도 괜찮을까요?"></textarea>
+              <p class="help"><span>10자 이상 200자 이하</span><span class="num" id="qCount">0/200</span></p>
+              <p class="err" id="e-q" hidden>질문을 10자 이상 적어 주세요</p>
+            </div>
+            <div class="field">
+              <label class="label" for="story">사연<span class="opt">(선택)</span></label>
+              <textarea class="input" id="story" maxlength="1000" placeholder="상황을 조금 더 알려 주시면 리딩에 함께 담아요."></textarea>
+              <p class="help"><span>이름·연락처 같은 개인정보는 적지 말아 주세요</span><span class="num" id="sCount">0/1000</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" data-step="3" hidden>
+          <h2>리딩을 골라 주세요</h2>
+          <p>카드는 모두 아홉 장을 뽑아요. 리포트에 담기는 깊이가 달라요. (상품 구성은 예시예요)</p>
+          <div class="prods" role="radiogroup" aria-label="리딩 상품" id="prods"></div>
+        </div>
+
+        <div class="step" data-step="4" hidden>
+          <h2>받을 메일을 적고 결제해 주세요</h2>
+          <p>결제가 확인되면 카드를 뽑고, 리포트는 운영자 검수 후 이 메일로 보내 드려요.</p>
+          <div class="form">
+            <div class="field">
+              <label class="label" for="mail">받을 메일<span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="mail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+              <p class="err" id="e-mail" hidden>메일 주소를 다시 확인해 주세요 (예: name@naver.com)</p>
+            </div>
+            <p class="note">실제 사이트에서는 아임웹 주문서와 결제 화면이 이 자리에 나와요. 데모에서는 결제 없이 '결제 완료'로 넘어가요.</p>
+          </div>
+        </div>
+
+        <div class="paid" id="paid" hidden tabindex="-1">
+          <span class="chip ok" style="justify-self:start">결제 완료 (데모)</span>
+          <h2>주문을 받았어요</h2>
+          <div><span class="help">주문 번호</span><div class="ono" id="ono"></div></div>
+          <p style="color:var(--ink-2)">운영자가 결제를 확인하면 카드 아홉 장을 뽑아 기록해요. 위의 '리딩 작업실'에서 이 주문이 어떻게 처리되는지 볼 수 있어요.</p>
+          <div class="acts"><button class="btn btn-primary btn-lg" type="button" id="goWork">작업실에서 이 주문 보기</button><button class="btn btn-secondary btn-lg" type="button" id="again">새로 주문하기</button></div>
+        </div>
+
+        <div class="step-nav" id="stepNav">
+          <button class="btn btn-secondary btn-lg" type="button" id="prev" hidden>이전</button>
+          <button class="btn btn-primary btn-lg" type="button" id="next">다음</button>
+        </div>
+      </div>
+
+      <aside class="card summary" aria-labelledby="sumT">
+        <h3 id="sumT">주문 내용</h3>
+        <dl class="dl">
+          <div><dt>고민 분야</dt><dd id="sTopic">-</dd></div>
+          <div><dt>질문</dt><dd id="sQ">-</dd></div>
+          <div><dt>리딩</dt><dd id="sProd">-</dd></div>
+        </dl>
+        <div class="total"><span>결제 금액</span><b id="sTotal">0<small>원</small></b></div>
+        <p class="note">결제 후에는 카드를 다시 뽑을 수 없어요. 결과가 마음에 들지 않아도 같은 질문으로 다시 뽑지 않는 것이 이 서재의 약속이에요.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 리딩 작업실 -->
+  <section id="v-work" role="tabpanel" aria-labelledby="t-work" hidden>
+    <div class="w-head">
+      <div>
+        <h1>리딩 작업실</h1>
+        <p>운영자만 쓰는 화면이에요. 주문을 고르면 카드 아홉 장을 뽑아 기록하고, AI 초안을 고쳐 PDF 리포트로 보내요.</p>
+      </div>
+      <span class="badge-ai">데모: AI 대신 미리 쓴 문장 조합 · 기록은 이 브라우저 안에서만</span>
+    </div>
+    <div class="work">
+      <nav class="card olist" aria-label="주문 목록"><h2>주문</h2><div id="olist" style="display:contents"></div></nav>
+      <div class="detail" id="detail"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>고요서재 (가상 브랜드)</b>
+    <span>주문·고객 이름·질문은 지어낸 예시예요. 실제 사이트는 아임웹(페이지·상품·결제) + 운영자용 작업실(구글 시트·Apps Script·AI API)로 만들어요.</span>
+    <span>리포트에는 'AI가 쓴 초안을 운영자가 검수했어요'를 적는 것을 권해요.</span>
+  </div>
+</footer>
+
+<div class="scrim" id="rpScrim" hidden>
+  <div class="rp-wrap">
+    <div class="rp-bar"><b>리포트 미리보기 (A4)</b><div class="acts"><button class="btn btn-secondary" type="button" id="rpPrint">인쇄 · PDF로 저장</button><button class="btn btn-primary" type="button" id="rpSend">고객에게 보내기</button><button class="btn btn-ghost" type="button" id="rpClose">닫기</button></div></div>
+    <article class="report" id="report" aria-label="리포트"></article>
+  </div>
+</div>
+
+<div class="toast-live" id="toast" role="status" aria-live="polite"><div class="toast"><span id="toastText"></span></div></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const won = n => n.toLocaleString('ko-KR');
+  let tt; const toast = t => { $('#toastText').textContent = t; $('#toast').classList.add('on'); clearTimeout(tt); tt = setTimeout(() => $('#toast').classList.remove('on'), 2600); };
+  const pad = n => String(n).padStart(2,'0');
+  const stamp = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+  // ---------- 카드 78장 ----------
+  const MAJOR = [['바보','새 출발·가벼움'],['마법사','시작하는 힘·재능'],['여사제','직감·조용한 앎'],['여황제','풍요·돌봄'],['황제','질서·책임'],['교황','배움·조언자'],['연인','선택·마음의 일치'],['전차','의지·전진'],['힘','부드러운 용기'],['은둔자','혼자 돌아보기'],['운명의 수레바퀴','흐름의 전환'],['정의','균형·공정한 판단'],['매달린 사람','멈춤·다른 시선'],['죽음','끝과 새 장'],['절제','조절·조화'],['악마','집착·얽매임'],['탑','갑작스런 변화'],['별','희망·회복'],['달','불안·흐릿함'],['태양','밝음·드러남'],['심판','깨어남·다시 부름'],['세계','완성·한 바퀴']];
+  const ROMAN = ['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
+  const SUITS = [['완드','열정과 행동'],['컵','감정과 관계'],['소드','생각과 결정'],['펜타클','일과 생활']];
+  const RANKS = [['에이스','새로 시작되는'],['2','갈림길에 선'],['3','넓어지는'],['4','잠시 쉬어 가는'],['5','부딪히는'],['6','회복되는'],['7','버티며 시험받는'],['8','빠르게 움직이는'],['9','끝을 앞둔'],['10','무게가 가득한'],['시종','소식이 오는'],['기사','밀고 나가는'],['여왕','성숙하게 돌보는'],['왕','책임지고 이끄는']];
+  const DECK = [];
+  MAJOR.forEach((m,i) => DECK.push({id:'M'+i, name:m[0], num:ROMAN[i], kw:m[1], major:true}));
+  SUITS.forEach((s,si) => RANKS.forEach((r,ri) => DECK.push({id:'S'+si+'R'+ri, name:`${s[0]} ${r[0]}`, num:s[0], kw:`${r[1]} ${s[1]}`, suit:si})));
+  const POS = ['지금의 나','마음속 바람','걸림돌','지나온 길','숨은 힘','다가올 일','주변 사람','조언','흐름의 끝'];
+  const SYM = {
+    major:'<svg viewBox="0 0 40 40"><path d="M20 5c1.5 8 7 13.5 15 15-8 1.5-13.5 7-15 15-1.5-8-7-13.5-15-15 8-1.5 13.5-7 15-15z"/></svg>',
+    0:'<svg viewBox="0 0 40 40"><path d="M13 35 27 5M24 11.5l5 .5M22 16.5l5 .5M15.5 29l-4-.5"/></svg>',
+    1:'<svg viewBox="0 0 40 40"><path d="M10 8h20l-3 14a7 7 0 0 1-14 0zM20 29v6M13 36h14"/></svg>',
+    2:'<svg viewBox="0 0 40 40"><path d="M20 4v26M14 30h12M20 30v6M12 10l8-6 8 6"/></svg>',
+    3:'<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14"/><path d="m20 9 3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg>'
+  };
+  // 암호학적 난수로 0..n-1 정수
+  const rnd = n => { const a = new Uint32Array(1); const lim = Math.floor(0x100000000 / n) * n; let x; do { crypto.getRandomValues(a); x = a[0]; } while (x >= lim); return x % n; };
+  function draw9(){ const idx = DECK.map((_,i) => i); for (let i = idx.length - 1; i > 0; i--){ const j = rnd(i + 1); [idx[i], idx[j]] = [idx[j], idx[i]]; } return idx.slice(0,9).map((k,p) => ({card:DECK[k], rev: rnd(2) === 1, pos:POS[p]})); }
+
+  // ---------- 주문 데이터 ----------
+  const TOPICS = ['연애·관계','일·진로','마음·건강','돈·생활','가족','그 밖의 고민'];
+  const PRODS = [
+    {id:'p1', name:'가벼운 리딩', price:4900, desc:'아홉 장의 흐름을 한 장짜리 요약으로 (PDF 3쪽 안팎)'},
+    {id:'p2', name:'깊은 리딩', price:9900, desc:'자리마다 해석과 조언까지 (PDF 8쪽 안팎)'},
+    {id:'p3', name:'기록 리딩', price:14900, desc:'깊은 리딩 + 앞으로 3개월의 흐름과 다시 볼 질문 (PDF 12쪽 안팎)'}
+  ];
+  const now = new Date();
+  const ORDERS = [
+    {no:'GY-1021-003', who:'김*은', topic:'일·진로', prod:'p2', q:'이직 제안을 받았는데, 지금 회사에 남는 것과 옮기는 것 중 어떤 흐름이 저에게 맞을까요?', story:'지금 회사는 4년째고 편하지만 배우는 게 줄었어요. 새 회사는 규모가 작고 연봉은 비슷해요.', paid:'2026-10-21 21:12', status:'paid'},
+    {no:'GY-1021-002', who:'이*준', topic:'연애·관계', prod:'p1', q:'오래 연락이 끊긴 친구에게 먼저 연락해도 괜찮을까요?', story:'', paid:'2026-10-21 19:40', status:'paid'},
+    {no:'GY-1020-011', who:'박*아', topic:'마음·건강', prod:'p3', q:'요즘 쉽게 지치는데, 어떻게 하면 제 리듬을 되찾을 수 있을까요?', story:'', paid:'2026-10-20 22:05', status:'sent', sentAt:'2026-10-21 10:30'}
+  ];
+  // 발송된 주문은 이미 뽑은 기록이 있어요
+  ORDERS[2].draw = draw9(); ORDERS[2].drawnAt = '2026-10-20 22:31:48'; ORDERS[2].draft = '(발송된 리포트 원문은 시트의 "리포트" 탭에 보관돼요.)';
+  const ST = {paid:['info','추출 전'], drawn:['neu','추출 완료'], draft:['warn','검수 중'], sent:['ok','발송 완료']};
+
+  // ---------- 탭 ----------
+  function showTab(k){ $('#t-cust').setAttribute('aria-selected', k === 0); $('#t-work').setAttribute('aria-selected', k === 1); $('#v-cust').hidden = k !== 0; $('#v-work').hidden = k !== 1; window.scrollTo({top:0}); }
+  $('#t-cust').addEventListener('click', () => showTab(0));
+  $('#t-work').addEventListener('click', () => { showTab(1); renderWork(); });
+
+  // ---------- 고객 주문 단계 ----------
+  let step = 1; const sel = {topic:null, prod:null};
+  $('#topics').innerHTML = TOPICS.map(t => `<label class="rc"><input type="radio" name="topic" value="${t}"><span>${t}</span></label>`).join('');
+  $('#prods').innerHTML = PRODS.map((p,i) => `<label class="prod"><input type="radio" name="prod" value="${p.id}" ${i===1?'checked':''}><span class="box"><b>${p.name}</b><span class="pr">${won(p.price)}<small>원</small></span><p>${p.desc}</p></span></label>`).join('');
+  sel.prod = 'p2';
+  $('#topics').addEventListener('change', e => { sel.topic = e.target.value; $('#e-topic').hidden = true; sum(); });
+  $('#prods').addEventListener('change', e => { sel.prod = e.target.value; sum(); });
+  const qText = $('#qText'), story = $('#story'), mail = $('#mail');
+  qText.addEventListener('input', () => { $('#qCount').textContent = `${qText.value.length}/200`; if (qText.value.trim().length >= 10){ $('#e-q').hidden = true; qText.setAttribute('aria-invalid','false'); } sum(); });
+  story.addEventListener('input', () => { $('#sCount').textContent = `${story.value.length}/1000`; });
+  function sum(){
+    $('#sTopic').textContent = sel.topic || '-';
+    const q = qText.value.trim(); $('#sQ').textContent = q ? (q.length > 40 ? q.slice(0,40) + '…' : q) : '-';
+    const p = PRODS.find(x => x.id === sel.prod); $('#sProd').textContent = step >= 3 ? p.name : '-';
+    $('#sTotal').innerHTML = `${step >= 3 ? won(p.price) : 0}<small>원</small>`;
+  }
+  function go(n){
+    step = n;
+    document.querySelectorAll('.step').forEach(s => s.hidden = +s.dataset.step !== n);
+    document.querySelectorAll('#stepper li').forEach(li => { const s = +li.dataset.s; li.toggleAttribute('aria-current', false); if (s === n) li.setAttribute('aria-current','step'); li.classList.toggle('done', s < n); });
+    $('#prev').hidden = n === 1;
+    $('#next').textContent = n === 4 ? `${won(PRODS.find(x => x.id === sel.prod).price)}원 결제하기` : '다음';
+    sum();
+    const first = document.querySelector(`.step[data-step="${n}"] input, .step[data-step="${n}"] textarea`); if (first && n > 1) first.focus({preventScroll:true});
+  }
+  $('#prev').addEventListener('click', () => go(step - 1));
+  $('#next').addEventListener('click', () => {
+    if (step === 1 && !sel.topic){ $('#e-topic').hidden = false; document.querySelector('#topics input').focus(); return; }
+    if (step === 2 && qText.value.trim().length < 10){ $('#e-q').hidden = false; qText.setAttribute('aria-invalid','true'); qText.focus(); return; }
+    if (step === 4){
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())){ $('#e-mail').hidden = false; mail.setAttribute('aria-invalid','true'); mail.focus(); return; }
+      const btn = $('#next'); btn.disabled = true; btn.innerHTML = '<span class="spin" aria-hidden="true"></span> 결제 확인 중';
+      setTimeout(() => {
+        const d = new Date(); const no = `GY-${pad(d.getMonth()+1)}${pad(d.getDate())}-${String(ORDERS.length + 9).padStart(3,'0')}`;
+        ORDERS.unshift({no, who:'나*(데모)', topic:sel.topic, prod:sel.prod, q:qText.value.trim(), story:story.value.trim(), paid:stamp(d).slice(0,16), status:'paid', isMine:true});
+        cur = no;
+        document.querySelectorAll('.step').forEach(s => s.hidden = true); $('#stepNav').hidden = true; $('#stepper').hidden = true;
+        $('#ono').textContent = no; $('#paid').hidden = false; $('#paid').focus();
+        btn.disabled = false; toast('결제가 끝났어요 (데모)');
+      }, 800);
+      return;
+    }
+    go(step + 1);
+  });
+  mail.addEventListener('input', () => { $('#e-mail').hidden = true; mail.setAttribute('aria-invalid','false'); });
+  $('#goWork').addEventListener('click', () => { showTab(1); renderWork(); });
+  $('#again').addEventListener('click', () => {
+    sel.topic = null; document.querySelectorAll('input[name="topic"]').forEach(r => r.checked = false); qText.value = ''; story.value = ''; mail.value = '';
+    $('#qCount').textContent = '0/200'; $('#sCount').textContent = '0/1000';
+    $('#paid').hidden = true; $('#stepNav').hidden = false; $('#stepper').hidden = false; go(1);
+  });
+
+  // ---------- 작업실 ----------
+  let cur = ORDERS[0].no;
+  function renderList(){
+    $('#olist').innerHTML = ORDERS.map(o => `<button type="button" class="oitem" data-no="${o.no}" aria-current="${o.no === cur}"><span class="r1"><span class="no">${o.no}</span><span class="chip ${ST[o.status][0]}">${ST[o.status][1]}</span></span><span class="q">${esc(o.q)}</span><span class="m">${esc(o.who)} · ${o.topic} · ${PRODS.find(p => p.id === o.prod).name}</span></button>`).join('');
+  }
+  $('#olist').addEventListener('click', e => { const b = e.target.closest('[data-no]'); if (!b) return; cur = b.dataset.no; renderWork(); });
+  function cardHTML(d, flipped){
+    const sym = d.card.major ? SYM.major : SYM[d.card.suit];
+    return `<div class="tcard ${flipped ? 'on' : ''} ${d.rev ? 'rev' : ''}"><div class="in"><div class="back"><svg viewBox="0 0 24 24"><path d="M15 3a9 9 0 1 0 5 15 7 7 0 0 1-5-15z"/></svg></div><div class="face"><span class="n">${d.card.num}</span>${sym}<span class="nm">${d.card.name}</span></div></div></div>`;
+  }
+  function backHTML(){ return `<div class="tcard"><div class="in"><div class="back"><svg viewBox="0 0 24 24"><path d="M15 3a9 9 0 1 0 5 15 7 7 0 0 1-5-15z"/></svg></div></div></div>`; }
+  function renderWork(){
+    renderList();
+    const o = ORDERS.find(x => x.no === cur); const p = PRODS.find(x => x.id === o.prod);
+    const drawn = !!o.draw;
+    $('#detail').innerHTML = `
+      <div class="card qbox">
+        <div class="r1"><h2>${o.no}</h2><span class="chip ${ST[o.status][0]}">${ST[o.status][1]}</span></div>
+        <div class="meta"><span class="tag">${esc(o.who)}</span><span class="tag">${o.topic}</span><span class="tag">${p.name} · ${won(p.price)}원</span><span class="tag">결제 ${o.paid}</span></div>
+        <blockquote>${esc(o.q)}</blockquote>
+        ${o.story ? `<p class="story">사연: ${esc(o.story)}</p>` : ''}
+      </div>
+      <div class="card blk">
+        <div class="blk-h"><div><h3>카드 아홉 장</h3><p>78장 중 겹치지 않게 뽑고, 뽑은 시각·카드·자리를 기록해요. 자리 이름은 예시예요.</p></div>
+          <button class="btn btn-primary" type="button" id="drawBtn" ${drawn ? 'disabled' : ''}>${drawn ? '이 주문은 이미 뽑았어요' : '카드 아홉 장 뽑기'}</button></div>
+        <div class="spread" id="spread">${(drawn ? o.draw : POS.map(pos => ({pos}))).map((d,i) => `<div class="slot"><span class="pos">${d.pos}</span>${drawn ? cardHTML(d, true) : backHTML()}<span class="ori">${drawn ? (d.rev ? '역방향' : '정방향') : ''}</span></div>`).join('')}</div>
+        ${drawn ? `<div class="record"><span><b>추출 기록</b> · ${o.drawnAt} · 다시 뽑기 잠김</span><span>방식 <code>crypto.getRandomValues</code> · 78장 중 9장 · 역방향 사용 켬 · 시트 '추출' 탭에 저장</span></div>` : '<p class="note">결제가 확인된 주문만 뽑을 수 있어요. 한 번 뽑으면 다시 뽑을 수 없어요.</p>'}
+      </div>
+      <div class="card blk">
+        <div class="blk-h"><div><h3>리딩 초안</h3><p>실제로는 뽑힌 카드·자리·질문을 AI에 보내 초안을 받아요. 데모는 미리 쓴 문장 조합이에요.</p></div>
+          <button class="btn btn-secondary" type="button" id="aiBtn" ${!drawn || o.status === 'sent' ? 'disabled' : ''}>${o.draft ? '초안 다시 만들기' : 'AI 초안 만들기'}</button></div>
+        <label class="sr" for="draft">리딩 초안</label>
+        <textarea class="input draft" id="draft" ${!o.draft || o.status === 'sent' ? 'readonly' : ''} placeholder="${drawn ? 'AI 초안 만들기를 누르면 여기에 초안이 들어와요.' : '카드를 먼저 뽑아 주세요.'}">${o.draft ? esc(o.draft) : ''}</textarea>
+        <div class="acts"><button class="btn btn-primary btn-lg" type="button" id="pvBtn" ${!o.draft ? 'disabled' : ''}>리포트 미리보기</button>${o.status === 'sent' ? `<span class="chip ok" style="align-self:center">${o.sentAt} 발송</span>` : ''}</div>
+      </div>`;
+    const dBtn = $('#drawBtn'); if (dBtn && !drawn) dBtn.addEventListener('click', () => doDraw(o));
+    const aBtn = $('#aiBtn'); if (aBtn) aBtn.addEventListener('click', () => doDraft(o));
+    $('#draft').addEventListener('input', e => { o.draft = e.target.value; });
+    $('#pvBtn').addEventListener('click', () => openReport(o));
+  }
+  function doDraw(o){
+    const btn = $('#drawBtn'); btn.disabled = true; btn.innerHTML = '<span class="spin" aria-hidden="true"></span> 뽑는 중';
+    o.draw = draw9(); o.drawnAt = stamp(new Date()); o.status = 'drawn';
+    const slots = document.querySelectorAll('#spread .slot');
+    slots.forEach((s,i) => { const d = o.draw[i]; s.innerHTML = `<span class="pos">${d.pos}</span>${cardHTML(d, false)}<span class="ori"></span>`; });
+    slots.forEach((s,i) => setTimeout(() => { s.querySelector('.tcard').classList.add('on'); s.querySelector('.ori').textContent = o.draw[i].rev ? '역방향' : '정방향'; }, 120 + i * 110));
+    setTimeout(() => { renderWork(); toast('아홉 장을 뽑아 기록했어요'); }, 120 + 9 * 110 + 450);
+  }
+  function doDraft(o){
+    const btn = $('#aiBtn'); btn.disabled = true; btn.innerHTML = '<span class="spin" aria-hidden="true"></span> 초안 쓰는 중';
+    setTimeout(() => { o.draft = makeDraft(o); o.status = 'draft'; renderWork(); $('#draft').focus(); toast('초안이 들어왔어요. 읽고 고쳐 주세요'); }, 900);
+  }
+  // 받침에 맞춰 조사 고르기 (숫자는 읽는 소리 기준)
+  const DIG = {'0':1,'1':1,'2':0,'3':1,'4':0,'5':0,'6':1,'7':1,'8':1,'9':0};
+  function hasB(word){ const c = word.replace(/[\s'’)]+$/,'').slice(-1); if (c in DIG) return !!DIG[c]; const k = c.charCodeAt(0) - 0xAC00; return k >= 0 && k <= 11171 ? k % 28 !== 0 : false; }
+  const J = (w, b, nb) => w + (hasB(w) ? b : nb);
+  function makeDraft(o){
+    const g = k => o.draw[POS.indexOf(k)];
+    const L = d => d.rev ? `'${d.card.name}' 역방향` : `'${d.card.name}'`;
+    const tone = d => d.rev ? `${d.card.kw}의 기운이 아직 안쪽에 머물러 있어요` : `${d.card.kw}의 기운이 또렷해요`;
+    return [
+      `질문: ${o.q}`,
+      ``,
+      `지금의 나에는 ${J(L(g('지금의 나')),'이','가')} 나왔어요. ${tone(g('지금의 나'))}. 마음속 바람 자리의 ${J(L(g('마음속 바람')),'은','는')} 당신이 정말 원하는 쪽을 보여 줘요.`,
+      ``,
+      `걸림돌 자리에는 ${J(L(g('걸림돌')),'이','가')} 있어요. ${g('걸림돌').rev ? '이미 조금씩 풀리고 있는 문제' : '지금 가장 크게 느껴지는 부담'}일 수 있어요. 지나온 길의 ${J(L(g('지나온 길')),'을','를')} 보면 비슷한 고비를 한 번 넘긴 적이 있어요.`,
+      ``,
+      `숨은 힘으로 나온 ${J(L(g('숨은 힘')),'은','는')} 스스로 덜 알아차린 강점이에요. 다가올 일의 ${J(L(g('다가올 일')),'과','와')} 주변 사람의 ${J(L(g('주변 사람')),'을','를')} 함께 보면, 혼자 정하기보다 믿는 한 사람과 이야기해 볼 때 흐름이 열려요.`,
+      ``,
+      `조언 카드는 ${J(L(g('조언')),'이에요','예요')}. ${g('조언').rev ? '서두르기보다 한 걸음 물러서 확인하는 쪽' : '망설이기보다 작게라도 먼저 움직이는 쪽'}을 권해요. 흐름의 끝에 놓인 ${J(L(g('흐름의 끝')),'은','는')} 이 고민이 어디로 정리될지 보여 주는 카드예요.`,
+      ``,
+      `(운영자 메모: 위 문장은 데모용 조합 문장이에요. 실제로는 AI 초안을 받아 운영자가 고쳐 써요.)`
+    ].join('\n');
+  }
+
+  // ---------- 리포트 ----------
+  const rp = $('#rpScrim'); let rpOrder = null, lastFocus = null;
+  function openReport(o){
+    rpOrder = o; lastFocus = document.activeElement; const p = PRODS.find(x => x.id === o.prod);
+    $('#report').innerHTML = `
+      <div class="rh"><span class="bn"><span class="mark"><svg viewBox="0 0 16 16"><path d="M10 2.5a6 6 0 1 0 3 9.5 4.6 4.6 0 0 1-3-9.5z"/></svg></span>고요서재</span><small>${o.no}<br>${p.name} · ${o.topic}</small></div>
+      <div><h2>${esc(o.who.replace('(데모)',''))} 님의 서랍</h2><p class="rq" style="margin-top:8px">${esc(o.q)}</p></div>
+      <div class="rgrid">${o.draw.map(d => `<div><span>${d.pos}</span><b>${d.card.name}</b>${d.rev ? ' <span style="display:inline;color:var(--mut)">역</span>' : ''}</div>`).join('')}</div>
+      <div class="rbody">${esc(o.draft)}</div>
+      <p class="rfoot">카드는 ${o.drawnAt}에 78장 중 겹치지 않게 뽑아 기록했어요. 이 리포트는 AI가 쓴 초안을 운영자가 읽고 고쳐 완성했어요. 타로 리딩은 마음을 돌아보기 위한 이야기이며, 의료·법률·투자 판단을 대신하지 않아요.</p>`;
+    rp.hidden = false; document.body.style.overflow = 'hidden'; $('#rpClose').focus();
+    $('#rpSend').disabled = o.status === 'sent'; $('#rpSend').textContent = o.status === 'sent' ? '이미 보냈어요' : '고객에게 보내기';
+  }
+  function closeReport(){ rp.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+  $('#rpClose').addEventListener('click', closeReport);
+  rp.addEventListener('click', e => { if (e.target === rp) closeReport(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !rp.hidden) closeReport(); });
+  $('#rpPrint').addEventListener('click', () => window.print());
+  $('#rpSend').addEventListener('click', () => { rpOrder.status = 'sent'; rpOrder.sentAt = stamp(new Date()).slice(0,16); closeReport(); renderWork(); toast('PDF 리포트를 고객 메일로 보냈어요 (데모)'); });
+
+  go(1); renderWork();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="ko" data-palette="green">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>솔담벳 · 판매처 찾기와 정품 확인 (제안용 데모)</title>
+<meta name="description" content="동물병원 판매처 조회와 제품 정품 확인·등록 기능 데모예요. 아임웹 코드 위젯 + 구글 시트로 만드는 제안용 예시예요.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2312804C'/%3E%3Cpath d='M10 17l4 4 8-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style id="tokens">
+:root{
+  color-scheme: light;
+  --brand:#12804C; --brand-hover:#0B6B42; --brand-press:#085634; --brand-text:#0B6B42;
+  --brand-tint:#EBF7F0; --brand-tint-2:#CDEBDA; --ring:0 0 0 3px rgba(18,128,76,.25); --on-brand:#FFFFFF;
+  --bg:#F2F4F7; --card:#FFFFFF; --soft:#F7F8FA; --track:#ECEFF3; --line:#E5E8EB; --line-2:#EBEEF2;
+  --ink:#191F28; --ink-2:#4E5968; --mut:#636D7B; --mut-2:#9AA3AE;
+  --ok:#127A4F; --ok-bg:#E3F6ED; --ok-dot:#1FA971;
+  --warn:#7A5600; --warn-bg:#FFF3D4; --warn-dot:#F2B01E;
+  --bad:#BF2930; --bad-bg:#FFE3E4; --bad-dot:#E5484D;
+  --info:#175CD3; --info-bg:#EAF2FF; --info-dot:#2E7CF6;
+  --neu:#4E5968; --neu-bg:#F0F2F5; --neu-dot:#8B95A1;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --fs-12:12px; --fs-13:13px; --fs-14:14px; --fs-15:15px; --fs-17:17px; --fs-20:20px; --fs-24:24px; --fs-32:32px; --fs-44:44px;
+  --lh-tight:1.3; --lh-body:1.6;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px; --sp-12:48px; --sp-16:64px;
+  --r-sm:8px; --r-md:12px; --r-lg:20px; --r-xl:28px; --r-pill:999px;
+  --sh-pill:0 1px 2px rgba(16,24,40,.08);
+  --sh-pop:0 2px 6px rgba(16,24,40,.06),0 12px 32px rgba(16,24,40,.12);
+  --h-sm:32px; --h-md:40px; --h-lg:48px; --h-cta:52px; --container:1200px;
+}
+</style>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:var(--fs-15);line-height:var(--lh-body);word-break:keep-all;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono);letter-spacing:.02em}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:calc(var(--container) + 48px);margin:0 auto;padding:0 var(--sp-6)}
+@media (max-width:640px){.wrap{padding:0 var(--sp-4)}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition:none!important}}
+
+.demo-band{background:var(--ink);color:#fff;font-size:var(--fs-13);text-align:center;padding:8px 16px;line-height:1.5}
+.demo-band b{font-weight:700;margin-right:6px}
+
+.top{padding-top:var(--sp-4)}
+.topbar{display:flex;align-items:center;gap:var(--sp-3);background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-pill);padding:8px 8px 8px 20px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:var(--fs-17);letter-spacing:-.02em;text-decoration:none;white-space:nowrap}
+.mark{width:28px;height:28px;border-radius:9px;background:var(--brand);display:grid;place-items:center;flex:none}
+.mark svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.pnav{display:flex;gap:2px;background:var(--track);border-radius:var(--r-pill);padding:4px;margin-left:auto}
+.pnav button{border:0;background:none;padding:0 18px;height:40px;border-radius:var(--r-pill);color:var(--ink-2);font-size:var(--fs-14);font-weight:500;white-space:nowrap}
+.pnav button:hover{color:var(--ink)}
+.pnav button[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--sh-pill)}
+@media (max-width:640px){
+  .topbar{flex-wrap:wrap;border-radius:var(--r-lg);padding:12px 8px 8px 16px}
+  .pnav{order:3;width:100%;margin:0}
+  .pnav button{flex:1;height:44px}
+}
+
+.head{margin:var(--sp-10) 0 var(--sp-6);display:flex;justify-content:space-between;align-items:flex-end;gap:var(--sp-4);flex-wrap:wrap}
+.head h1{font-size:44px;font-weight:800;letter-spacing:-.035em;line-height:1.2}
+.head p{color:var(--ink-2);margin-top:var(--sp-3);font-size:var(--fs-17);max-width:560px}
+.head .aside-note{font-size:var(--fs-13);color:var(--mut);max-width:340px;text-align:right}
+@media (max-width:640px){.head{margin:var(--sp-8) 0 var(--sp-5)}.head h1{font-size:30px}.head p{font-size:var(--fs-15)}.head .aside-note{text-align:left}}
+
+.card{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-lg);padding:var(--sp-6);min-width:0}
+@media (max-width:640px){.card{padding:var(--sp-5)}}
+
+/* 버튼 */
+.btn{--h:var(--h-md);display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--h);padding:0 16px;border-radius:var(--r-pill);border:1px solid transparent;font-size:var(--fs-14);font-weight:600;line-height:1;white-space:nowrap;text-decoration:none;transition:background-color .15s,border-color .15s,color .15s}
+.btn-primary{background:var(--brand);color:var(--on-brand)}
+.btn-primary:hover{background:var(--brand-hover)}
+.btn-primary:active{background:var(--brand-press)}
+.btn-secondary{background:var(--card);border-color:var(--line);color:var(--ink)}
+.btn-secondary:hover{background:var(--soft);border-color:#D5DAE0}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--track);color:var(--ink)}
+.btn:disabled{background:var(--track);border-color:transparent;color:var(--mut-2);cursor:not-allowed}
+.btn-cta{--h:var(--h-cta);width:100%;border-radius:var(--r-md);font-size:var(--fs-17)}
+.btn .ic{width:18px;height:18px}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 폼 */
+.form{display:grid;gap:var(--sp-5)}
+.field{display:grid;gap:var(--sp-2);min-width:0}
+.label{font-size:var(--fs-14);font-weight:600;color:var(--ink)}
+.label .req{color:var(--bad);margin-left:2px}
+.label .opt{color:var(--mut);font-weight:400;margin-left:4px}
+.input{height:var(--h-lg);width:100%;border:1px solid var(--line);border-radius:var(--r-md);padding:0 14px;font-size:var(--fs-15);background:var(--card);color:var(--ink);transition:border-color .15s,box-shadow .15s}
+.input::placeholder{color:var(--mut-2)}
+.input:hover{border-color:#D1D6DB}
+.input:focus{outline:0;border-color:var(--brand);box-shadow:var(--ring)}
+.input:disabled{background:var(--soft);color:var(--mut-2);cursor:not-allowed}
+.input[aria-invalid="true"]{border-color:var(--bad-dot)}
+select.input{appearance:none;-webkit-appearance:none;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23636D7B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+input[type="date"].input{min-width:0;-webkit-appearance:none;appearance:none;display:flex;align-items:center}
+.help{font-size:var(--fs-13);color:var(--mut)}
+.err{font-size:var(--fs-13);color:var(--bad);font-weight:500}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-4)}
+@media (max-width:640px){.row2{grid-template-columns:1fr;gap:var(--sp-5)}}
+.search{display:flex;align-items:center;gap:8px;height:var(--h-lg);padding:0 6px 0 14px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--card);color:var(--mut)}
+.search input{border:0;outline:0;font-size:var(--fs-15);width:100%;min-width:0;background:none;color:var(--ink);height:100%}
+.search input::placeholder{color:var(--mut-2)}
+.search:focus-within{border-color:var(--brand);box-shadow:var(--ring)}
+.search .clr{width:36px;height:36px;border:0;border-radius:50%;background:none;color:var(--mut);display:grid;place-items:center;flex:none}
+.search .clr:hover{background:var(--track)}
+.rchips{display:flex;gap:var(--sp-2);flex-wrap:wrap;border:0;margin:0;padding:0;min-width:0}
+.rc{position:relative}
+.rc input{position:absolute;opacity:0;width:1px;height:1px}
+.rc span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:var(--r-pill);font-size:var(--fs-14);font-weight:500;color:var(--ink-2);background:var(--card);cursor:pointer;white-space:nowrap}
+.rc span:hover{border-color:#D1D6DB}
+.rc input:checked+span{border-color:var(--brand);background:var(--brand-tint);color:var(--brand-text);font-weight:600}
+.rc input:focus-visible+span{box-shadow:var(--ring)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:var(--fs-14);color:var(--ink-2);cursor:pointer;padding-top:10px;min-height:44px}
+.cb{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:1.5px solid #B0B8C1;border-radius:6px;margin:0;flex:none;background:var(--card) center/14px no-repeat;cursor:pointer}
+.cb:checked{background-color:var(--brand);border-color:var(--brand);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+.cb:focus-visible{box-shadow:var(--ring);outline:0}
+.cb[aria-invalid="true"]{border-color:var(--bad-dot)}
+
+/* 칩 */
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px 0 9px;border-radius:var(--r-pill);font-size:var(--fs-12);font-weight:600;white-space:nowrap;line-height:1}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;flex:none}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.ok::before{background:var(--ok-dot)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.warn::before{background:var(--warn-dot)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}.chip.bad::before{background:var(--bad-dot)}
+.chip.neu{background:var(--neu-bg);color:var(--neu)}.chip.neu::before{background:var(--neu-dot)}
+.tag{display:inline-flex;align-items:center;height:26px;padding:0 9px;border-radius:6px;background:var(--soft);border:1px solid var(--line-2);font-size:var(--fs-12);font-weight:500;color:var(--ink-2);white-space:nowrap}
+.chips-x{display:flex;gap:var(--sp-2);overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.chips-x::-webkit-scrollbar{display:none}
+.fchip{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--card);font-size:var(--fs-14);font-weight:500;color:var(--ink-2);white-space:nowrap;flex:none}
+.fchip:hover{border-color:#D5DAE0;color:var(--ink)}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+
+/* 판매처 */
+.finder{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:var(--sp-4);align-items:start}
+.filters{display:grid;gap:var(--sp-5)}
+.filters h2{font-size:var(--fs-17);font-weight:700}
+.pair{display:grid;grid-template-columns:1fr;gap:var(--sp-5)}
+.wrapchips{display:flex;gap:var(--sp-2);flex-wrap:wrap}
+@media (max-width:1023px){.pair{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}.filters h2{display:none}}
+@media (max-width:640px){.head .aside-note{display:none}.filters{gap:var(--sp-4)}}
+@media (min-width:1024px){.filters{position:sticky;top:16px}}
+.res-h{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-3);flex-wrap:wrap}
+.res-h h2{font-size:var(--fs-20);font-weight:700;letter-spacing:-.02em}
+.res-h h2 b{color:var(--brand-text);font-variant-numeric:tabular-nums}
+.res-h .sub{font-size:var(--fs-13);color:var(--mut)}
+.res-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}
+.hosp{background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-lg);padding:var(--sp-5);display:grid;gap:var(--sp-3);align-content:start}
+.hosp h3{font-size:var(--fs-17);font-weight:700;letter-spacing:-.02em}
+.hosp .addr{font-size:var(--fs-14);color:var(--ink-2)}
+.hosp .tags{display:flex;gap:6px;flex-wrap:wrap}
+.hosp .acts{display:flex;gap:var(--sp-2)}
+.hosp .acts .btn{flex:1;--h:44px}
+.minimap{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line-2);background:#EEF1EC;position:relative}
+.minimap svg{display:block;width:100%;height:140px}
+.minimap figcaption{position:absolute;left:8px;top:8px;font-size:var(--fs-12);background:rgba(255,255,255,.92);border-radius:6px;padding:4px 8px;color:var(--ink-2)}
+mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
+.empty{grid-column:1/-1;text-align:center;padding:var(--sp-10) var(--sp-6);background:var(--card);border:1px dashed var(--line);border-radius:var(--r-lg)}
+.empty h3{font-size:var(--fs-15);font-weight:600}
+.empty p{font-size:var(--fs-13);color:var(--mut);margin:4px 0 var(--sp-4)}
+.empty .row{display:flex;gap:var(--sp-2);justify-content:center;flex-wrap:wrap}
+.more{margin-top:var(--sp-3);width:100%}
+@media (max-width:1023px){.finder{grid-template-columns:1fr}}
+@media (max-width:760px){.res-list{grid-template-columns:1fr}}
+
+/* 정품 확인 */
+.verify{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--sp-4);align-items:start}
+.lotguide{display:grid;gap:var(--sp-3)}
+.lotguide h2{font-size:var(--fs-17);font-weight:700}
+.lotguide p{font-size:var(--fs-14);color:var(--ink-2)}
+.box{background:var(--soft);border:1px solid var(--line-2);border-radius:var(--r-md);padding:var(--sp-4)}
+.box svg{display:block;width:100%;height:auto}
+.result{display:grid;gap:var(--sp-3);border-radius:var(--r-lg);padding:var(--sp-5);border:1px solid var(--line-2);background:var(--card)}
+.result h3{font-size:var(--fs-20);font-weight:700;letter-spacing:-.02em;line-height:1.35}
+.result p{font-size:var(--fs-14);color:var(--ink-2)}
+.result.ok{border-color:#B7E2CB;background:#F6FCF9}
+.result.bad{border-color:#F6C2C4;background:#FFF8F8}
+.result.warn{border-color:#F2DC9B;background:#FFFCF2}
+.kv{display:grid;grid-template-columns:96px minmax(0,1fr);gap:6px 12px;font-size:var(--fs-14);margin:0}
+.kv dt{color:var(--mut)}
+.kv dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.regno{font-size:var(--fs-20);font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.result .chip{justify-self:start}
+@media (max-width:640px){.kv{grid-template-columns:72px minmax(0,1fr)}}
+@media (max-width:1023px){.verify{grid-template-columns:1fr}}
+
+/* 관리 시트 미리보기 */
+.admin{margin-top:var(--sp-12)}
+.admin-h{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--sp-4);flex-wrap:wrap;margin-bottom:var(--sp-4)}
+.admin-h h2{font-size:var(--fs-24);font-weight:800;letter-spacing:-.02em}
+.admin-h p{font-size:var(--fs-14);color:var(--mut);margin-top:4px;max-width:620px}
+.seg{display:inline-flex;background:var(--track);border-radius:var(--r-pill);padding:4px;gap:2px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.seg button{border:0;background:none;border-radius:var(--r-pill);padding:0 16px;height:40px;font-size:var(--fs-14);font-weight:500;color:var(--ink-2);white-space:nowrap;flex:none}
+.seg button[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--sh-pill)}
+.sheet{padding:0;overflow:hidden}
+.sheet-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line-2);font-size:var(--fs-13);color:var(--mut)}
+.sheet-bar b{color:var(--ink);font-weight:600}
+.tscroll{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:var(--fs-14)}
+.tbl th{background:var(--soft);color:var(--mut);font-size:var(--fs-13);font-weight:500;text-align:left;padding:10px 16px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.tbl td{padding:13px 16px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.new td{background:#F6FCF9}
+.scroll-hint{display:none;font-size:var(--fs-12);color:var(--mut);padding:8px 16px;border-top:1px solid var(--line-2)}
+@media (max-width:760px){.scroll-hint{display:block}}
+
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:var(--r-md);padding:12px 14px;font-size:var(--fs-14);box-shadow:var(--sh-pop)}
+.toast-live{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,16px);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;width:max-content;max-width:calc(100% - 32px)}
+.toast-live.on{opacity:1;transform:translate(-50%,0)}
+footer{margin-top:var(--sp-16);padding:var(--sp-8) 0 var(--sp-12);border-top:1px solid var(--line);font-size:var(--fs-13);color:var(--mut)}
+footer .wrap{display:grid;gap:6px}
+footer b{color:var(--ink-2)}
+</style>
+</head>
+<body>
+<div class="demo-band" role="note"><b>제안용 데모 · 예시</b>가상 브랜드 '솔담벳'이에요. 병원·제품·LOT 번호는 모두 지어낸 예시이고, 실제로는 아임웹 코드 위젯 + 구글 시트로 만들어요.</div>
+
+<header class="top wrap">
+  <div class="topbar">
+    <a class="logo" href="#" aria-label="솔담벳"><span class="mark"><svg viewBox="0 0 16 16"><path d="M4 8.5l2.5 2.5L12 5"/></svg></span>솔담벳</a>
+    <div class="pnav" role="tablist" aria-label="기능">
+      <button type="button" role="tab" id="tab-find" aria-controls="view-find" aria-selected="true">판매처 찾기</button>
+      <button type="button" role="tab" id="tab-verify" aria-controls="view-verify" aria-selected="false">정품 확인</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- 판매처 찾기 -->
+  <section id="view-find" role="tabpanel" aria-labelledby="tab-find">
+    <div class="head">
+      <div>
+        <h1>가까운 동물병원에서<br>만나요</h1>
+        <p>솔담벳 제품 중 일부는 동물병원에서만 팔아요. 지역이나 병원 이름으로 판매처를 찾아보세요.</p>
+      </div>
+      <p class="aside-note">판매처 목록은 담당자가 구글 시트에서 고치면 이 화면에 바로 반영돼요.</p>
+    </div>
+    <div class="finder">
+      <form class="card filters" id="findForm" role="search" onsubmit="return false">
+        <h2>찾기</h2>
+        <div class="pair">
+          <div class="field">
+            <label class="label" for="sido">시/도</label>
+            <select class="input" id="sido"></select>
+          </div>
+          <div class="field">
+            <label class="label" for="sigungu">시/군/구</label>
+            <select class="input" id="sigungu" disabled><option value="">시/도 먼저</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="q">병원 이름</label>
+          <div class="search">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="q" type="search" placeholder="예: 숲속, 하나" autocomplete="off" enterkeyhint="search">
+            <button class="clr" type="button" id="qClear" aria-label="검색어 지우기" hidden><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label" id="prodFilterL">취급 제품</span>
+          <div class="wrapchips" role="group" aria-labelledby="prodFilterL" id="prodFilter"></div>
+        </div>
+        <button class="btn btn-ghost" type="button" id="resetFind">조건 모두 지우기</button>
+      </form>
+      <div>
+        <div class="res-h">
+          <h2 id="resTitle" aria-live="polite"></h2>
+          <span class="sub" id="resSub"></span>
+        </div>
+        <ul class="res-list" id="resList"></ul>
+        <button class="btn btn-secondary more" type="button" id="moreBtn" hidden></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 정품 확인 -->
+  <section id="view-verify" role="tabpanel" aria-labelledby="tab-verify" hidden>
+    <div class="head">
+      <div>
+        <h1>우리 아이 제품,<br>정품인지 확인하세요</h1>
+        <p>포장의 LOT 번호를 넣으면 공장에서 나간 기록과 맞춰 보고, 정품이면 바로 등록돼요.</p>
+      </div>
+      <p class="aside-note">LOT 목록은 화면이 아니라 서버(구글 Apps Script)에서 대조해요. 데모에서만 화면 안 예시 목록으로 확인해요.</p>
+    </div>
+    <div class="verify">
+      <div class="card">
+        <form class="form" id="vForm" novalidate>
+          <div class="field">
+            <label class="label" for="vProd">제품<span class="req" aria-hidden="true">*</span></label>
+            <select class="input" id="vProd" required></select>
+            <p class="err" id="e-vProd" hidden>제품을 골라 주세요</p>
+          </div>
+          <div class="field">
+            <label class="label" for="vLot">LOT / BATCH 번호<span class="req" aria-hidden="true">*</span></label>
+            <input class="input mono" id="vLot" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="예: SD24A031" maxlength="12" required>
+            <p class="help" id="lotHelp">포장 뒷면 'LOT' 옆 8자리예요. 띄어쓰기와 대시(-)는 알아서 빼요.</p>
+            <p class="err" id="e-vLot" hidden>LOT 번호 8자리를 모두 써 주세요 (영문 2자 + 숫자 2자 + 영문 1자 + 숫자 3자)</p>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label class="label" for="vDate">구매일<span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="vDate" type="date" required>
+              <p class="err" id="e-vDate" hidden>오늘이나 그 전 날짜를 골라 주세요</p>
+            </div>
+            <div class="field">
+              <label class="label" for="vTel">휴대폰<span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="vTel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-1234-5678" maxlength="13" required>
+              <p class="err" id="e-vTel" hidden>휴대폰 번호 11자리를 모두 써 주세요</p>
+            </div>
+          </div>
+          <div class="field">
+            <span class="label" id="vHowL">구매 방법<span class="req" aria-hidden="true">*</span></span>
+            <div class="rchips" role="radiogroup" aria-labelledby="vHowL">
+              <label class="rc"><input type="radio" name="vHow" value="동물병원"><span>동물병원</span></label>
+              <label class="rc"><input type="radio" name="vHow" value="병원 연계 온라인몰"><span>병원 연계 온라인몰</span></label>
+              <label class="rc"><input type="radio" name="vHow" value="기타"><span>기타</span></label>
+            </div>
+            <p class="err" id="e-vHow" hidden>구매 방법을 골라 주세요</p>
+          </div>
+          <div class="field" id="hospField" hidden>
+            <label class="label" for="vHosp">구매한 병원<span class="opt">(선택)</span></label>
+            <input class="input" id="vHosp" list="hospList" placeholder="병원 이름을 쓰면 목록이 나와요" autocomplete="off">
+            <datalist id="hospList"></datalist>
+          </div>
+          <label class="check"><input type="checkbox" class="cb" id="vAgree"><span>정품 확인과 등록을 위해 휴대폰 번호·구매 정보를 받고, 등록 후 2년 동안 보관해요. 동의해요. <span style="color:var(--bad)">*</span></span></label>
+          <p class="err" id="e-vAgree" hidden>개인정보 수집에 동의해 주세요</p>
+          <button class="btn btn-primary btn-cta" type="submit" id="vBtn">정품 확인하기</button>
+        </form>
+      </div>
+      <div style="display:grid;gap:var(--sp-4)">
+        <div id="vResult" aria-live="polite"></div>
+        <div class="card lotguide">
+          <h2>LOT 번호는 여기 있어요</h2>
+          <p>상자 뒷면 아래쪽 흰 칸에 제조일·유효기한과 함께 찍혀 있어요.</p>
+          <div class="box" aria-hidden="true">
+            <svg viewBox="0 0 320 150">
+              <rect x="20" y="10" width="280" height="130" rx="10" fill="#fff" stroke="#C3CAD3" stroke-width="2"/>
+              <rect x="40" y="28" width="120" height="10" rx="3" fill="#E5E8EB"/>
+              <rect x="40" y="46" width="180" height="8" rx="3" fill="#ECEFF3"/>
+              <rect x="40" y="60" width="160" height="8" rx="3" fill="#ECEFF3"/>
+              <rect x="36" y="82" width="190" height="46" rx="6" fill="#EBF7F0" stroke="#12804C" stroke-width="2"/>
+              <text x="48" y="101" font-family="ui-monospace,Menlo,monospace" font-size="13" fill="#191F28" font-weight="700">LOT SD24A031</text>
+              <text x="48" y="119" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#4E5968">MFG 2024.12  EXP 2026.12</text>
+              <rect x="240" y="84" width="44" height="44" rx="4" fill="none" stroke="#C3CAD3" stroke-width="2"/>
+              <path d="M248 92h8v8h-8zM268 92h8v8h-8zM248 112h8v8h-8zM264 108h4v4h-4zM272 116h4v4h-4z" fill="#C3CAD3"/>
+            </svg>
+          </div>
+          <p class="help">예시로 넣어 볼 번호: <code class="mono">SD24A031</code>(이어클린 정품), <code class="mono">SD25C207</code>(조인트 츄 정품), <code class="mono">SD24B112</code> + 010-1111-2222(이미 등록됨), <code class="mono">SD23Z999</code>(목록에 없음)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 관리 시트 -->
+  <section class="admin" aria-labelledby="adminTitle">
+    <div class="admin-h">
+      <div>
+        <h2 id="adminTitle">담당자는 구글 시트만 고치면 돼요</h2>
+        <p>귀사 구글 계정에 시트 하나를 만들고 탭 3개로 나눠요. 아래는 그 시트를 미리 보여 드리는 화면이에요. 정품 확인에서 등록하면 '등록' 탭에 줄이 생겨요.</p>
+      </div>
+      <div class="seg" role="tablist" aria-label="시트 탭">
+        <button type="button" role="tab" aria-selected="true" data-sheet="hosp">판매처</button>
+        <button type="button" role="tab" aria-selected="false" data-sheet="lot">LOT 목록</button>
+        <button type="button" role="tab" aria-selected="false" data-sheet="reg">등록 <span id="regCount" class="num"></span></button>
+      </div>
+    </div>
+    <div class="card sheet">
+      <div class="sheet-bar"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg><b>솔담벳_판매처·정품 관리</b><span id="sheetDesc"></span></div>
+      <div class="tscroll" tabindex="0" aria-label="시트 내용"><table class="tbl" id="sheetTbl"></table></div>
+      <p class="scroll-hint">표를 옆으로 밀어서 볼 수 있어요.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>솔담벳 (가상 브랜드)</b>
+    <span>병원 이름·주소·전화번호·제품·LOT 번호는 모두 지어낸 예시예요. 전화번호는 일부러 쓰지 않는 번호(0000)로 넣었어요.</span>
+    <span>아임웹 기능 추가 제안을 위해 만든 데모예요. 입력한 내용은 이 브라우저 안에서만 쓰이고 어디로도 보내지 않아요.</span>
+  </div>
+</footer>
+
+<div class="toast-live" id="toast" role="status" aria-live="polite"><div class="toast"><span id="toastText"></span></div></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let tt; const toast = t => { $('#toastText').textContent = t; $('#toast').classList.add('on'); clearTimeout(tt); tt = setTimeout(() => $('#toast').classList.remove('on'), 2600); };
+
+  const PRODS = [
+    {id:'EAR', name:'솔담 이어클린 120mL'},
+    {id:'JNT', name:'솔담 조인트 츄 60정'},
+    {id:'DRM', name:'솔담 더마 스프레이 100mL'},
+    {id:'DNT', name:'솔담 덴탈 겔 50g'}
+  ];
+  const short = id => PRODS.find(p => p.id === id).name.replace('솔담 ','').replace(/ \d.*$/,'');
+  const H = [
+    ['서울','강남구','숲속동물병원','서울 강남구 선릉로 000, 1층','02-0000-1201',['EAR','JNT','DRM']],
+    ['서울','강남구','하나로동물의료센터','서울 강남구 도곡로 000, 2층','02-0000-1202',['EAR','DNT']],
+    ['서울','마포구','연남숲동물병원','서울 마포구 동교로 000','02-0000-1203',['JNT','DRM']],
+    ['서울','송파구','잠실바른동물병원','서울 송파구 올림픽로 000, 3층','02-0000-1204',['EAR','JNT','DRM','DNT']],
+    ['서울','송파구','하나동물병원 송파점','서울 송파구 송파대로 000','02-0000-1205',['DRM']],
+    ['경기','성남시 분당구','정자누리동물병원','경기 성남시 분당구 정자일로 000','031-0000-1206',['EAR','JNT']],
+    ['경기','수원시 영통구','광교숲동물병원','경기 수원시 영통구 광교중앙로 000','031-0000-1207',['JNT','DNT']],
+    ['경기','고양시 일산동구','호수공원동물병원','경기 고양시 일산동구 중앙로 000','031-0000-1208',['EAR','DRM']],
+    ['경기','용인시 수지구','수지하나동물병원','경기 용인시 수지구 풍덕천로 000','031-0000-1209',['EAR','JNT','DRM']],
+    ['인천','연수구','송도바다동물병원','인천 연수구 송도과학로 000','032-0000-1210',['EAR','JNT']],
+    ['대전','유성구','유성숲동물병원','대전 유성구 대학로 000','042-0000-1211',['JNT','DRM','DNT']],
+    ['대전','서구','둔산바른동물병원','대전 서구 둔산로 000','042-0000-1212',['EAR']],
+    ['충남','천안시 서북구','불당동물의료센터','충남 천안시 서북구 불당대로 000','041-0000-1213',['EAR','JNT','DRM']],
+    ['충남','논산시','논산하나동물병원','충남 논산시 시민로 000','041-0000-1214',['JNT']],
+    ['충남','아산시','배방숲동물병원','충남 아산시 배방읍 배방로 000','041-0000-1215',['EAR','DNT']],
+    ['부산','해운대구','해운대숲동물병원','부산 해운대구 해운대로 000','051-0000-1216',['EAR','JNT','DRM']],
+    ['대구','수성구','범어바른동물병원','대구 수성구 달구벌대로 000','053-0000-1217',['JNT','DRM']],
+    ['광주','서구','상무숲동물병원','광주 서구 상무중앙로 000','062-0000-1218',['EAR','DNT']]
+  ].map((r,i) => ({i, sido:r[0], sgg:r[1], name:r[2], addr:r[3], tel:r[4], prods:r[5]}));
+
+  // ---------- 판매처 찾기 ----------
+  const SIDO = [...new Set(H.map(h => h.sido))];
+  const sido = $('#sido'), sgg = $('#sigungu'), q = $('#q');
+  let prodF = 'ALL', shown = 6, openMap = -1;
+  sido.innerHTML = '<option value="">전체 지역</option>' + SIDO.map(s => `<option>${s}</option>`).join('');
+  $('#prodFilter').innerHTML = `<button type="button" class="fchip" aria-pressed="true" data-p="ALL">전체</button>` + PRODS.map(p => `<button type="button" class="fchip" aria-pressed="false" data-p="${p.id}">${short(p.id)}</button>`).join('');
+
+  sido.addEventListener('change', () => {
+    const list = [...new Set(H.filter(h => h.sido === sido.value).map(h => h.sgg))];
+    sgg.disabled = !sido.value;
+    sgg.innerHTML = sido.value ? '<option value="">전체</option>' + list.map(s => `<option>${s}</option>`).join('') : '<option value="">시/도 먼저</option>';
+    shown = 6; draw();
+  });
+  sgg.addEventListener('change', () => { shown = 6; draw(); });
+  q.addEventListener('input', () => { $('#qClear').hidden = !q.value; shown = 6; draw(); });
+  $('#qClear').addEventListener('click', () => { q.value = ''; $('#qClear').hidden = true; q.focus(); draw(); });
+  $('#prodFilter').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; prodF = b.dataset.p; document.querySelectorAll('#prodFilter .fchip').forEach(x => x.setAttribute('aria-pressed', x === b)); shown = 6; draw(); });
+  function resetAll(){ sido.value = ''; sido.dispatchEvent(new Event('change')); q.value = ''; $('#qClear').hidden = true; prodF = 'ALL'; document.querySelectorAll('#prodFilter .fchip').forEach(x => x.setAttribute('aria-pressed', x.dataset.p === 'ALL')); draw(); }
+  $('#resetFind').addEventListener('click', resetAll);
+  $('#moreBtn').addEventListener('click', () => { shown += 6; draw(); });
+
+  const norm = s => s.replace(/\s/g,'').toLowerCase();
+  function hi(text, kw){ if (!kw) return esc(text); const i = norm(text).indexOf(norm(kw)); if (i < 0) return esc(text);
+    // 공백을 무시하고 찾은 위치를 원문 위치로 바꿔요
+    let n = -1, start = -1, end = -1; for (let k = 0; k < text.length; k++){ if (/\s/.test(text[k])) continue; n++; if (n === i) start = k; if (n === i + norm(kw).length - 1){ end = k + 1; break; } }
+    return start < 0 || end < 0 ? esc(text) : esc(text.slice(0,start)) + '<mark>' + esc(text.slice(start,end)) + '</mark>' + esc(text.slice(end)); }
+  function mapSvg(seed){
+    const x = 60 + (seed * 37) % 200, y = 40 + (seed * 53) % 60;
+    return `<svg viewBox="0 0 320 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="320" height="140" fill="#EEF1EC"/><path d="M0 ${30+seed%20}h320M0 ${95+seed%15}h320M${70+seed%30} 0v140M${210+seed%25} 0v140" stroke="#fff" stroke-width="10"/><path d="M0 62h320M140 0v140" stroke="#fff" stroke-width="5"/><rect x="${(seed*29)%240}" y="${(seed*17)%50+70}" width="60" height="34" rx="4" fill="#DCE8DA"/><g transform="translate(${x} ${y})"><path d="M0 0c-9 0-16 7-16 16 0 12 16 26 16 26s16-14 16-26C16 7 9 0 0 0z" fill="#12804C"/><circle cx="0" cy="16" r="6" fill="#fff"/></g></svg>`;
+  }
+  function draw(){
+    const kw = q.value.trim();
+    const list = H.filter(h => (!sido.value || h.sido === sido.value) && (!sgg.value || h.sgg === sgg.value) && (!kw || norm(h.name).includes(norm(kw))) && (prodF === 'ALL' || h.prods.includes(prodF)));
+    const where = [sido.value, sgg.value].filter(Boolean).join(' ') || '전국';
+    $('#resTitle').innerHTML = `${esc(where)} 판매처 <b>${list.length}</b>곳`;
+    $('#resSub').textContent = prodF === 'ALL' ? '모든 제품' : `'${short(prodF)}' 파는 곳`;
+    const ul = $('#resList');
+    if (!list.length){
+      ul.innerHTML = `<li class="empty"><h3>조건에 맞는 판매처가 없어요</h3><p>${kw ? `'${esc(kw)}' 이름의 병원을 찾지 못했어요. ` : ''}지역을 넓히거나 제품 조건을 풀어 보세요.</p><div class="row">${kw ? '<button class="btn btn-secondary" type="button" data-act="clearq">검색어 지우기</button>' : ''}<button class="btn btn-secondary" type="button" data-act="reset">전체 지역 보기</button></div></li>`;
+      $('#moreBtn').hidden = true; return;
+    }
+    ul.innerHTML = list.slice(0, shown).map(h => `
+      <li class="hosp">
+        <h3>${hi(h.name, kw)}</h3>
+        <p class="addr">${esc(h.addr)}</p>
+        <div class="tags">${h.prods.map(p => `<span class="tag">${short(p)}</span>`).join('')}</div>
+        ${openMap === h.i ? `<figure class="minimap" style="margin:0">${mapSvg(h.i+3)}<figcaption>지도 자리 · 실제로는 카카오 지도</figcaption></figure>` : ''}
+        <div class="acts">
+          <a class="btn btn-secondary" href="tel:${h.tel.replace(/-/g,'')}" data-tel="${h.tel}"><svg class="ic" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span class="num">${h.tel}</span></a>
+          <button class="btn btn-secondary" type="button" data-map="${h.i}" aria-expanded="${openMap === h.i}"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${openMap === h.i ? '지도 닫기' : '위치 보기'}</button>
+        </div>
+      </li>`).join('');
+    const rest = list.length - shown;
+    $('#moreBtn').hidden = rest <= 0;
+    $('#moreBtn').textContent = `${Math.min(rest,6)}곳 더 보기 (남은 ${rest}곳)`;
+  }
+  $('#resList').addEventListener('click', e => {
+    const m = e.target.closest('[data-map]'); if (m){ const i = +m.dataset.map; openMap = openMap === i ? -1 : i; draw(); const b = document.querySelector(`[data-map="${i}"]`); if (b) b.focus(); return; }
+    const a = e.target.closest('[data-act]'); if (a){ if (a.dataset.act === 'clearq'){ q.value=''; $('#qClear').hidden = true; draw(); } else resetAll(); return; }
+    const t = e.target.closest('[data-tel]'); if (t){ e.preventDefault(); toast('데모라 전화가 걸리지 않아요. 실제 사이트에서는 휴대폰에서 바로 걸려요'); }
+  });
+
+  // ---------- 탭 ----------
+  const tabs = [['#tab-find','#view-find'],['#tab-verify','#view-verify']];
+  function showTab(k){ tabs.forEach(([t,v],i) => { $(t).setAttribute('aria-selected', i === k); $(v).hidden = i !== k; }); }
+  $('#tab-find').addEventListener('click', () => showTab(0));
+  $('#tab-verify').addEventListener('click', () => showTab(1));
+  document.querySelector('.pnav').addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){ const k = $('#tab-find').getAttribute('aria-selected') === 'true' ? 1 : 0; showTab(k); $(tabs[k][0]).focus(); } });
+
+  // ---------- 정품 확인 ----------
+  // 데모용 예시 LOT 목록. 실제로는 서버(Apps Script)에만 있어요.
+  const LOTS = {
+    SD24A031:{p:'EAR', mfg:'2024-12', exp:'2026-12'}, SD24A118:{p:'EAR', mfg:'2024-08', exp:'2026-08'}, SD25A022:{p:'EAR', mfg:'2025-02', exp:'2027-02'},
+    SD24B112:{p:'JNT', mfg:'2024-06', exp:'2026-06'}, SD25C207:{p:'JNT', mfg:'2025-05', exp:'2027-05'},
+    SD25D014:{p:'DRM', mfg:'2025-01', exp:'2027-01'}, SD25D090:{p:'DRM', mfg:'2025-07', exp:'2027-07'},
+    SD24E301:{p:'DNT', mfg:'2024-11', exp:'2026-11'}, SD23E077:{p:'DNT', mfg:'2023-09', exp:'2025-09'}
+  };
+  const REG = [{no:'SD-20261012-0003', lot:'SD24B112', p:'JNT', tel:'010-1111-2222', how:'동물병원', date:'2026-10-12', when:'2026-10-12 14:20'}];
+  const vProd = $('#vProd'), vLot = $('#vLot'), vDate = $('#vDate'), vTel = $('#vTel');
+  vProd.innerHTML = '<option value="">제품 고르기</option>' + PRODS.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  const today = new Date(); const ymd = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  vDate.max = ymd(today);
+  $('#hospList').innerHTML = H.map(h => `<option value="${h.name}">`).join('');
+  document.querySelectorAll('input[name="vHow"]').forEach(r => r.addEventListener('change', () => { $('#hospField').hidden = document.querySelector('input[name="vHow"]:checked').value !== '동물병원'; setErr('vHow', false); }));
+  const LOT_RE = /^[A-Z]{2}\d{2}[A-Z]\d{3}$/;
+  vLot.addEventListener('input', () => { const p = vLot.selectionStart, before = vLot.value.length; vLot.value = vLot.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8); const d = before - vLot.value.length; try{ vLot.setSelectionRange(Math.max(0,p-d), Math.max(0,p-d)); }catch(_){} if (LOT_RE.test(vLot.value)) setErr('vLot', false); });
+  vLot.addEventListener('blur', () => { if (vLot.value) setErr('vLot', !LOT_RE.test(vLot.value)); });
+  vTel.addEventListener('input', () => { const d = vTel.value.replace(/\D/g,'').slice(0,11); vTel.value = d.length < 4 ? d : d.length < 8 ? `${d.slice(0,3)}-${d.slice(3)}` : `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}`; });
+  vTel.addEventListener('blur', () => { if (vTel.value) setErr('vTel', vTel.value.replace(/\D/g,'').length !== 11); });
+  vDate.addEventListener('change', () => setErr('vDate', !vDate.value || vDate.value > ymd(today)));
+  vProd.addEventListener('change', () => setErr('vProd', !vProd.value));
+  $('#vAgree').addEventListener('change', e => setErr('vAgree', !e.target.checked));
+  function setErr(k, on){ const e = $('#e-'+k); if (e) e.hidden = !on; const el = {vProd, vLot, vDate, vTel, vAgree:$('#vAgree')}[k]; if (el) el.setAttribute('aria-invalid', on); }
+
+  const mask = t => t.replace(/^(\d{3})-(\d{2})\d{2}-(\d{2})\d{2}$/, '$1-$2**-$3**');
+  function result(kind, title, body, rows){
+    const chip = {ok:['ok','정품 확인'], bad:['bad','확인 안 됨'], warn:['warn','확인 필요']}[kind];
+    $('#vResult').innerHTML = `<div class="result ${kind}" tabindex="-1" id="resBox"><span class="chip ${chip[0]}">${chip[1]}</span><h3>${title}</h3>${body ? `<p>${body}</p>` : ''}${rows ? `<dl class="kv">${rows.map(([a,b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl>` : ''}</div>`;
+    const box = $('#resBox'); box.focus({preventScroll:true}); box.scrollIntoView({block:'nearest'});
+  }
+
+  $('#vForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const how = (document.querySelector('input[name="vHow"]:checked')||{}).value;
+    const bad = {vProd:!vProd.value, vLot:!LOT_RE.test(vLot.value), vDate:!vDate.value || vDate.value > ymd(today), vTel:vTel.value.replace(/\D/g,'').length !== 11, vHow:!how, vAgree:!$('#vAgree').checked};
+    Object.entries(bad).forEach(([k,b]) => setErr(k,b));
+    const first = Object.keys(bad).find(k => bad[k]);
+    if (first){ const el = first === 'vHow' ? document.querySelector('input[name="vHow"]') : first === 'vAgree' ? $('#vAgree') : $('#'+first); el.focus(); toast('빠진 칸을 채워 주세요'); return; }
+    const btn = $('#vBtn'); btn.disabled = true; btn.innerHTML = '<span class="spin" aria-hidden="true"></span> 확인하는 중';
+    setTimeout(() => {
+      btn.disabled = false; btn.textContent = '정품 확인하기';
+      const lot = vLot.value, info = LOTS[lot], prodName = PRODS.find(p => p.id === vProd.value).name;
+      if (!info){
+        result('bad', '이 LOT 번호는 출고 기록에 없어요', `'${esc(lot)}'를 찾지 못했어요. 0과 O, 1과 I를 헷갈리기 쉬워요. 다시 확인해도 안 되면 포장 사진을 고객센터로 보내 주세요.`);
+        return;
+      }
+      if (info.p !== vProd.value){
+        result('warn', '제품과 LOT 번호가 서로 달라요', `이 번호는 '${esc(PRODS.find(p => p.id === info.p).name)}'의 번호예요. 고른 제품('${esc(prodName)}')을 다시 확인해 주세요.`);
+        return;
+      }
+      const dup = REG.find(r => r.lot === lot && r.tel === vTel.value);
+      if (dup){
+        result('warn', '이미 등록한 제품이에요', '같은 휴대폰 번호로 이 LOT를 한 번 등록했어요. 정품은 맞아요.', [['등록번호', `<span class="num">${dup.no}</span>`], ['등록한 날', dup.when]]);
+        return;
+      }
+      const n = REG.length + 4, no = `SD-${ymd(today).replace(/-/g,'')}-${String(n).padStart(4,'0')}`;
+      const expired = info.exp < ymd(today).slice(0,7);
+      REG.push({no, lot, p:vProd.value, tel:vTel.value, how, date:vDate.value, when:`${ymd(today)} ${today.toTimeString().slice(0,5)}`, isNew:true});
+      result('ok', '정품이 맞아요. 등록을 마쳤어요', expired ? '정품이지만 유효기한이 지났어요. 사용 전에 구매한 병원에 물어봐 주세요.' : '', [
+        ['등록번호', `<span class="regno">${no}</span>`], ['제품', esc(prodName)], ['LOT', `<span class="mono">${lot}</span>`],
+        ['제조 · 유효', `${info.mfg} · ${info.exp}${expired ? ' <span class="chip warn" style="margin-left:4px">기한 지남</span>' : ''}`], ['휴대폰', mask(vTel.value)]
+      ]);
+      toast('정품 등록을 마쳤어요');
+      drawSheet();
+    }, 600);
+  });
+
+  // ---------- 관리 시트 미리보기 ----------
+  let sheet = 'hosp';
+  document.querySelectorAll('[data-sheet]').forEach(b => b.addEventListener('click', () => { sheet = b.dataset.sheet; document.querySelectorAll('[data-sheet]').forEach(x => x.setAttribute('aria-selected', x === b)); drawSheet(); }));
+  function drawSheet(){
+    $('#regCount').textContent = REG.length;
+    const T = $('#sheetTbl');
+    if (sheet === 'hosp'){
+      $('#sheetDesc').textContent = '· 판매처 탭 · 한 줄 = 병원 하나';
+      T.innerHTML = '<thead><tr><th>시/도</th><th>시/군/구</th><th>병원명</th><th>주소</th><th>전화</th><th>취급 제품</th><th>노출</th></tr></thead><tbody>' + H.slice(0,6).map(h => `<tr><td>${h.sido}</td><td>${h.sgg}</td><td>${h.name}</td><td>${h.addr}</td><td class="num">${h.tel}</td><td>${h.prods.map(short).join(', ')}</td><td>예</td></tr>`).join('') + '</tbody>';
+    } else if (sheet === 'lot'){
+      $('#sheetDesc').textContent = '· LOT 탭 · 화면에는 안 보이고 서버만 읽어요';
+      T.innerHTML = '<thead><tr><th>LOT</th><th>제품</th><th>제조</th><th>유효기한</th><th>출고 수량</th></tr></thead><tbody>' + Object.entries(LOTS).map(([k,v],i) => `<tr><td class="mono">${k}</td><td>${short(v.p)}</td><td class="num">${v.mfg}</td><td class="num">${v.exp}</td><td class="num">${(1200 + i*340).toLocaleString('ko-KR')}</td></tr>`).join('') + '</tbody>';
+    } else {
+      $('#sheetDesc').textContent = '· 등록 탭 · 정품 확인에서 등록하면 자동으로 쌓여요';
+      T.innerHTML = '<thead><tr><th>등록번호</th><th>등록 시각</th><th>제품</th><th>LOT</th><th>구매일</th><th>구매 방법</th><th>휴대폰</th></tr></thead><tbody>' + REG.slice().reverse().map(r => `<tr class="${r.isNew ? 'new' : ''}"><td class="num">${r.no}</td><td class="num">${r.when}</td><td>${short(r.p)}</td><td class="mono">${r.lot}</td><td class="num">${r.date}</td><td>${r.how}</td><td class="num">${mask(r.tel)}</td></tr>`).join('') + '</tbody>';
+    }
+  }
+
+  draw(); drawSheet();
+})();
+</script>
+</body>
+</html>
