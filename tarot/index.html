@@ -104,8 +104,8 @@ textarea.input{height:auto;min-height:112px;padding:12px 14px;resize:vertical;li
 .rc input:focus-visible+span{box-shadow:var(--ring)}
 
 /* ===== 고객 화면 ===== */
-.c-hero{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:var(--sp-8);margin:var(--sp-12) 0 var(--sp-10);align-items:end}
-.c-hero h1{font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1.15}
+.c-hero{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:var(--sp-8);margin:var(--sp-12) 0 var(--sp-10);align-items:center}
+.c-hero h1{font-size:60px;font-weight:800;letter-spacing:-.04em;line-height:1.15}
 .c-hero p{font-size:var(--fs-17);color:var(--ink-2);max-width:480px}
 .c-hero .facts{display:flex;gap:var(--sp-6);margin-top:var(--sp-5);flex-wrap:wrap}
 .c-hero .facts div{display:grid}
@@ -236,6 +236,34 @@ textarea.draft{min-height:300px;font-size:var(--fs-15)}
 footer{margin-top:var(--sp-16);padding:var(--sp-8) 0 var(--sp-12);border-top:1px solid var(--line);font-size:var(--fs-13);color:var(--mut)}
 footer .wrap{display:grid;gap:6px}
 footer b{color:var(--ink-2)}
+/* 첫 화면: 카드 아홉 장 부채꼴 (뒷면) */
+.c-hero .side{display:grid;gap:var(--sp-5)}
+.fan{position:relative;height:200px;margin:0 auto;width:100%;max-width:460px}
+.fan .fc{position:absolute;left:50%;top:16px;width:84px;height:126px;margin-left:-42px;border-radius:10px;background:var(--brand);border:1px solid var(--brand-press);transform-origin:50% 230%;transform:rotate(var(--a)) translateY(0);transition:transform .45s cubic-bezier(.2,.8,.2,1);box-shadow:0 1px 2px rgba(31,29,36,.18)}
+.fan .fc::after{content:"";position:absolute;inset:5px;border:1px solid rgba(255,255,255,.32);border-radius:7px}
+.fan .fc svg{position:absolute;left:50%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;fill:none;stroke:rgba(255,255,255,.78);stroke-width:1.4}
+.fan .fc:hover{transform:rotate(var(--a)) translateY(-14px)}
+.fan.closed .fc{transform:rotate(0deg)}
+.fan-cap{font-size:var(--fs-13);color:var(--mut);text-align:center;margin-top:-4px}
+@media (max-width:900px){
+  .fan{height:132px;max-width:330px;margin-top:var(--sp-2)}
+  .fan .fc{top:10px;width:56px;height:84px;margin-left:-28px;border-radius:8px;transform-origin:50% 230%}
+  .fan .fc svg{width:22px;height:22px;margin:-11px 0 0 -11px}
+}
+
+/* 예시 질문 */
+.sugg{display:grid;gap:var(--sp-2)}
+.sugg>span{font-size:var(--fs-13);color:var(--mut);font-weight:600}
+.sugg button{display:block;width:100%;text-align:left;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--soft);font-size:var(--fs-14);color:var(--ink-2);line-height:1.45;transition:border-color .15s,background-color .15s}
+.sugg button:hover{border-color:var(--brand-tint-2);background:var(--brand-tint);color:var(--brand-text)}
+.sugg button:active{transform:scale(.99)}
+.btn:active:not(:disabled){transform:scale(.98)}
+.rp-bar{position:sticky;top:-24px;z-index:2;box-shadow:0 1px 2px rgba(16,24,40,.08)}
+@media (max-width:640px){
+  .btn:where(:not(.btn-lg,.btn-cta)){--h:44px}
+  .rp-bar{padding:8px}
+  .rp-bar b{width:100%;padding:4px 8px 0}
+}
 </style>
 </head>
 <body>
@@ -256,7 +284,8 @@ footer b{color:var(--ink-2)}
   <section id="v-cust" role="tabpanel" aria-labelledby="t-cust">
     <div class="c-hero">
       <h1>말하지 못한 질문,<br>카드 아홉 장으로<br>읽어 드려요</h1>
-      <div>
+      <div class="side">
+        <div class="fan closed" id="fan" aria-hidden="true"></div>
         <p>고민을 적어 주시면 결제가 확인된 뒤 카드 아홉 장을 뽑고, 그 카드로 쓴 리딩을 운영자가 한 번 더 읽고 다듬어 PDF로 보내 드려요.</p>
         <div class="facts">
           <div><b>9장</b><span>78장 중 겹치지 않게</span></div>
@@ -291,6 +320,7 @@ footer b{color:var(--ink-2)}
               <textarea class="input" id="qText" maxlength="200" placeholder="예: 지금 하는 일을 계속하면서 새 공부를 시작해도 괜찮을까요?"></textarea>
               <p class="help"><span>10자 이상 200자 이하</span><span class="num" id="qCount">0/200</span></p>
               <p class="err" id="e-q" hidden>질문을 10자 이상 적어 주세요</p>
+              <div class="sugg" id="sugg"></div>
             </div>
             <div class="field">
               <label class="label" for="story">사연<span class="opt">(선택)</span></label>
@@ -576,6 +606,29 @@ footer b{color:var(--ink-2)}
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !rp.hidden) closeReport(); });
   $('#rpPrint').addEventListener('click', () => window.print());
   $('#rpSend').addEventListener('click', () => { rpOrder.status = 'sent'; rpOrder.sentAt = stamp(new Date()).slice(0,16); closeReport(); renderWork(); toast('PDF 리포트를 고객 메일로 보냈어요 (데모)'); });
+
+  // 첫 화면 부채꼴: 처음 한 번만 펼쳐져요
+  const fan = $('#fan');
+  fan.innerHTML = Array.from({length:9}, (_,i) => `<span class="fc" style="--a:${(i-4)*9}deg;transition-delay:${i*40}ms"><svg viewBox="0 0 24 24"><path d="M15 3a9 9 0 1 0 5 15 7 7 0 0 1-5-15z"/></svg></span>`).join('');
+  requestAnimationFrame(() => requestAnimationFrame(() => fan.classList.remove('closed')));
+  setTimeout(() => fan.querySelectorAll('.fc').forEach(c => c.style.transitionDelay = '0ms'), 1200);
+
+  // 분야마다 예시 질문 (누르면 질문 칸에 들어가요)
+  const SUGG = {
+    '연애·관계':['그 사람과의 관계를 어떻게 이어 가면 좋을까요?','오래 연락이 끊긴 친구에게 먼저 연락해도 괜찮을까요?','지금 만나는 사람과의 앞으로의 흐름이 궁금해요.'],
+    '일·진로':['지금 하는 일을 계속하면서 새 공부를 시작해도 괜찮을까요?','이직 제안을 받았는데 어떤 선택이 저에게 맞을까요?','올해 안에 일에서 무엇을 먼저 정리하면 좋을까요?'],
+    '마음·건강':['요즘 쉽게 지치는데 어떻게 하면 제 리듬을 되찾을 수 있을까요?','불안한 마음을 어떻게 다루면 좋을까요?','나를 돌보려면 지금 무엇을 바꾸면 좋을까요?'],
+    '돈·생활':['지출을 줄이려면 어떤 습관부터 바꾸면 좋을까요?','이사를 고민 중인데 지금이 맞는 때일까요?','생활을 단순하게 바꾸려면 무엇부터 하면 좋을까요?'],
+    '가족':['부모님과 자주 부딪히는데 어떻게 이야기하면 좋을까요?','멀어진 형제와의 사이를 어떻게 풀면 좋을까요?','가족 안에서 제 마음을 어떻게 지키면 좋을까요?'],
+    '그 밖의 고민':['지금 가장 먼저 정리해야 할 일은 무엇일까요?','새로운 시작을 앞두고 무엇을 준비하면 좋을까요?','요즘 자꾸 마음에 걸리는 일은 어떤 뜻일까요?']
+  };
+  function drawSugg(){
+    const list = SUGG[sel.topic] || SUGG['그 밖의 고민'];
+    $('#sugg').innerHTML = `<span>이렇게 물어봐도 좋아요</span>` + list.map(t => `<button type="button">${t}</button>`).join('');
+  }
+  $('#sugg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; qText.value = b.textContent; qText.dispatchEvent(new Event('input')); qText.focus(); });
+  $('#topics').addEventListener('change', drawSugg);
+  drawSugg();
 
   go(1); renderWork();
 })();

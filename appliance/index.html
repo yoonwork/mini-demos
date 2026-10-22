@@ -87,7 +87,6 @@ a{color:inherit}
 .hero{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--sp-4);margin-top:var(--sp-10);align-items:stretch}
 .hero-main{padding:var(--sp-10) var(--sp-8);background:var(--card);border:1px solid var(--line-2);border-radius:var(--r-xl);display:flex;flex-direction:column;justify-content:space-between;gap:var(--sp-8)}
 .hero h1{font-size:52px;font-weight:800;letter-spacing:-.035em;line-height:1.15}
-.hero h1 .soft{color:var(--mut)}
 .hero-sub{font-size:var(--fs-17);color:var(--ink-2);margin-top:var(--sp-4);max-width:520px}
 .hero-act{display:flex;gap:var(--sp-2);flex-wrap:wrap}
 .hero-side{display:grid;gap:var(--sp-4);grid-template-rows:auto 1fr}
@@ -278,6 +277,74 @@ select.input{appearance:none;-webkit-appearance:none;padding-right:40px;backgrou
 footer{margin-top:var(--sp-16);padding:var(--sp-8) 0 var(--sp-12);border-top:1px solid var(--line);font-size:var(--fs-13);color:var(--mut)}
 footer .wrap{display:grid;gap:6px}
 footer b{color:var(--ink-2)}
+
+/* 눌렀을 때 손맛 */
+.pcard{transition:border-color .15s,transform .12s}
+.pcard:active{transform:scale(.98)}
+.btn:active:not(:disabled){transform:scale(.98)}
+.pgrid.swap .pcard{animation:fadeIn .28s ease both}
+.pgrid.swap .pcard:nth-child(2){animation-delay:.03s}.pgrid.swap .pcard:nth-child(3){animation-delay:.06s}.pgrid.swap .pcard:nth-child(4){animation-delay:.09s}.pgrid.swap .pcard:nth-child(n+5){animation-delay:.12s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}}
+.sheet{animation:popIn .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes popIn{from{opacity:0;transform:translateY(16px) scale(.98)}}
+@media (max-width:640px){.sheet{animation:sheetUp .3s cubic-bezier(.2,.8,.2,1)}@keyframes sheetUp{from{transform:translateY(100%)}}}
+.total b.bump{animation:bump .3s ease}
+@keyframes bump{40%{color:var(--brand-text)}}
+
+/* 결제 단계 (시트 안) */
+.co{display:grid;gap:var(--sp-5)}
+.co-sum{background:var(--soft);border:1px solid var(--line-2);border-radius:var(--r-md);padding:14px 16px;display:grid;gap:6px;font-size:var(--fs-14)}
+.co-sum b{font-size:var(--fs-15)}
+.co-sum span{color:var(--ink-2)}
+.co-row{display:flex;justify-content:space-between;gap:var(--sp-3);font-size:var(--fs-14);color:var(--ink-2)}
+.co-row strong{color:var(--ink);font-weight:600;text-align:right}
+.co-done{display:grid;gap:var(--sp-3);justify-items:start;padding:var(--sp-2) 0}
+.co-done h4{font-size:var(--fs-20);font-weight:800;letter-spacing:-.02em}
+.co-done p{font-size:var(--fs-14);color:var(--ink-2)}
+.co-done .ono{font-size:var(--fs-24);font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.check-pop{width:56px;height:56px;border-radius:50%;background:var(--ok-bg);color:var(--ok);display:grid;place-items:center;animation:pop .35s cubic-bezier(.2,.9,.3,1.3)}
+.check-pop svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;animation:drawck .35s .15s ease forwards}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+@keyframes drawck{to{stroke-dashoffset:0}}
+.sheet-f .row-btns{display:flex;gap:var(--sp-2)}
+.sheet-f .row-btns .btn-cta{flex:1}
+.sheet-f .row-btns .btn-back{flex:none;width:auto;padding:0 18px;--h:var(--h-cta);border-radius:var(--r-md)}
+
+/* 예시로 채우기 */
+.demo-fill{display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap;background:var(--brand-tint);border:1px dashed var(--brand-tint-2);border-radius:var(--r-md);padding:10px 10px 10px 14px;font-size:var(--fs-13);color:var(--brand-text)}
+.demo-fill span{flex:1;min-width:180px}
+.demo-fill .btn{--h:44px;background:var(--card);border-color:var(--brand-tint-2);color:var(--brand-text)}
+.demo-fill .btn:hover{background:#fff;border-color:var(--brand)}
+
+/* 휴대폰 위로 내려오는 문자 알림 (미리보기) */
+.noti{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));z-index:70;width:min(380px,calc(100% - 24px));transform:translate(-50%,-140%);transition:transform .45s cubic-bezier(.2,.9,.25,1);background:#fff;border:1px solid var(--line-2);border-radius:20px;box-shadow:var(--sh-pop);padding:12px 14px;display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 12px;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.noti.on{transform:translate(-50%,0)}
+.noti .app{grid-row:span 3;width:40px;height:40px;border-radius:11px;background:var(--ok-dot);display:grid;place-items:center;color:#fff}
+.noti .app svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linejoin:round}
+.noti .h{display:flex;justify-content:space-between;font-size:var(--fs-12);color:var(--mut)}
+.noti b{font-size:var(--fs-14);font-weight:700}
+.noti p{font-size:var(--fs-13);color:var(--ink-2);line-height:1.45}
+.noti .tag-demo{font-size:11px;color:var(--mut)}
+.flash{animation:flash 1.4s ease}
+@keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(36,87,245,0)}25%{box-shadow:0 0 0 4px rgba(36,87,245,.28)}}
+.see-alert{display:none}
+@media (max-width:1023px){.see-alert{display:inline-flex}}
+
+/* 휴대폰 하단 고정 버튼 */
+.mbar{display:none}
+@media (max-width:640px){
+  .mbar{display:flex;gap:var(--sp-2);position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.98);border-top:1px solid var(--line-2);padding:10px var(--sp-4) calc(10px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .25s ease}
+  .mbar.on{transform:none}
+  .mbar .btn{--h:var(--h-cta);border-radius:var(--r-md);font-size:var(--fs-15)}
+  .mbar .btn-secondary{flex:none;width:auto;padding:0 16px}
+  .mbar .btn-primary{flex:1}
+  footer{padding-bottom:calc(var(--sp-12) + 72px)}
+  .toast-live{bottom:calc(88px + env(safe-area-inset-bottom))}
+  /* 누르는 곳 44px */
+  .btn:where(:not(.btn-lg,.btn-cta)){--h:44px}
+  .fchip{height:44px}
+  .seg button{height:44px}
+}
 </style>
 </head>
 <body>
@@ -300,7 +367,7 @@ footer b{color:var(--ink-2)}
   <section class="hero" aria-labelledby="heroTitle">
     <div class="hero-main">
       <div>
-        <h1 id="heroTitle">쓰던 가전은 팔고,<br><span class="soft">필요한 가전은</span><br>여기서 사세요</h1>
+        <h1 id="heroTitle">쓰던 가전은 팔고,<br>필요한 가전은<br>여기서 사세요</h1>
         <p class="hero-sub">업소용 냉장고부터 가정용 세탁기·에어컨까지 새 제품과 점검한 중고를 팔아요. 안 쓰는 가전은 사진 몇 장으로 매입 신청하세요.</p>
       </div>
       <div class="hero-act">
@@ -351,6 +418,7 @@ footer b{color:var(--ink-2)}
     <div class="buy">
       <div class="card">
         <form class="form" id="sellForm" novalidate>
+          <div class="demo-fill"><span>사진이 없어도 괜찮아요. 예시 내용으로 채워서 알림이 어떻게 오는지 바로 볼 수 있어요.</span><button class="btn btn-secondary" type="button" id="fillDemo">예시로 채워 보기</button></div>
           <div class="field">
             <span class="label" id="kindLabel">품목<span class="req" aria-hidden="true">*</span></span>
             <div class="rchips" role="radiogroup" aria-labelledby="kindLabel" id="sellKinds"></div>
@@ -418,7 +486,7 @@ footer b{color:var(--ink-2)}
           <div class="badge-ok"><svg class="ic" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
           <h3>매입 신청을 받았어요</h3>
           <p id="doneText"></p>
-          <div class="hero-act"><button class="btn btn-secondary" type="button" id="againBtn">하나 더 신청하기</button></div>
+          <div class="hero-act"><button class="btn btn-primary see-alert" type="button" id="seeAlert">사장님 알림 보기</button><button class="btn btn-secondary" type="button" id="againBtn">하나 더 신청하기</button></div>
         </div>
       </div>
       <aside class="card alerts" aria-labelledby="alertTitle">
@@ -464,13 +532,25 @@ footer b{color:var(--ink-2)}
     <div class="sheet-f">
       <div class="total"><span>결제 금액</span><b id="sTotal" aria-live="polite"></b></div>
       <p class="breakdown" id="sBreak"></p>
-      <button class="btn btn-primary btn-cta" type="button" id="buyBtn">바로 구매하기</button>
-      <p class="imweb-hint">아임웹 상품 옵션의 '추가 금액'으로 만들어요. 결제는 아임웹 쇼핑 결제로 이어져요.</p>
+      <div class="row-btns"><button class="btn btn-secondary btn-back" type="button" id="backBtn" hidden>옵션 다시 고르기</button><button class="btn btn-primary btn-cta" type="button" id="buyBtn">바로 구매하기</button></div>
+      <p class="imweb-hint" id="sHint">아임웹 상품 옵션의 '추가 금액'으로 만들어요. 결제는 아임웹 쇼핑 결제로 이어져요.</p>
     </div>
   </div>
 </div>
 
 <div class="toast-live" id="toast" role="status" aria-live="polite"><div class="toast"><span id="toastText"></span></div></div>
+
+<button class="noti" type="button" id="noti" aria-hidden="true" tabindex="-1">
+  <span class="app"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 20 12z"/></svg></span>
+  <span class="h"><span>문자 · 지금</span><span class="tag-demo">사장님 휴대폰 미리보기</span></span>
+  <b>[한결가전] 매입 신청 1건</b>
+  <p id="notiText">홈페이지 매입 신청 1건이 접수됐어요. 자세한 내용은 이메일에서 확인해 주세요.</p>
+</button>
+
+<div class="mbar" id="mbar">
+  <button class="btn btn-secondary" type="button" id="mbarCall"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>전화</button>
+  <a class="btn btn-primary" href="#sell">매입 견적 받기</a>
+</div>
 
 <script>
 (() => {
@@ -536,57 +616,133 @@ footer b{color:var(--ink-2)}
         </span>
       </button>`).join('');
   }
+  const swap = () => { grid.classList.remove('swap'); void grid.offsetWidth; grid.classList.add('swap'); };
   document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
     kind = b.dataset.kind;
     document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
-    renderCats(); renderGrid();
+    renderCats(); renderGrid(); swap();
   }));
-  catsEl.addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if(!b) return; cat = b.dataset.cat; renderCats(); renderGrid(); });
+  catsEl.addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if(!b) return; cat = b.dataset.cat; renderCats(); renderGrid(); swap(); });
   grid.addEventListener('click', e => {
     if (e.target.closest('[data-reset]')) { cat = '전체'; renderCats(); renderGrid(); return; }
     const c = e.target.closest('.pcard'); if (c) openSheet(+c.dataset.id, c);
   });
 
-  // 상품 상세
-  const scrim = $('#scrim'); let cur = null, qty = 1, lastFocus = null;
+  // 상품 상세 → 결제 단계 → 주문 접수 (한 시트 안에서)
+  const scrim = $('#scrim'); let cur = null, qty = 1, lastFocus = null, picks = [], mode = 'opt', shownTotal = 0, payWay = 0;
+  const PAY = ['신용·체크카드', '무통장 입금', '간편결제'];
   function openSheet(id, from){
-    cur = P.find(p => p.id === id); qty = 1; lastFocus = from;
+    cur = P.find(p => p.id === id); qty = 1; lastFocus = from; picks = cur.opts.map(() => 0); shownTotal = 0; payWay = 0;
     $('#sArt').innerHTML = ART[cur.art];
     $('#sheetTitle').textContent = cur.name;
     $('#sMeta').innerHTML = (cur.kind==='used' ? `<span class="chip ${cur.grade==='A급'?'ok':'neu'}">중고 ${cur.grade}</span>` : '<span class="tag">새상품</span>') + `<span>${cur.cat} · ${cur.spec}</span>`;
+    showOptions();
+    scrim.hidden = false; document.body.style.overflow = 'hidden';
+    $('#closeSheet').focus();
+  }
+  function showOptions(){
+    mode = 'opt';
     $('#sOpts').innerHTML = cur.opts.map((o,i) => `
       <fieldset class="og" style="border:0;margin:0;padding:0;min-width:0">
         <legend class="sr">${o.t}</legend>
         <h4 aria-hidden="true">${o.t}</h4>
-        <div class="rchips">${o.c.map((c,j) => `<label class="rc"><input type="radio" name="o${i}" value="${j}" ${j===0?'checked':''}><span>${c[0]} <em>${c[1] ? '+'+won(c[1])+'원' : '기본'}</em></span></label>`).join('')}</div>
+        <div class="rchips">${o.c.map((c,j) => `<label class="rc"><input type="radio" name="o${i}" value="${j}" ${j===picks[i]?'checked':''}><span>${c[0]} <em>${c[1] ? '+'+won(c[1])+'원' : '기본'}</em></span></label>`).join('')}</div>
       </fieldset>`).join('') + `
       <div class="og"><h4 id="qtyL">수량</h4><div class="qty" role="group" aria-labelledby="qtyL"><button type="button" id="qm" aria-label="수량 빼기">−</button><output id="qv" class="num">1</output><button type="button" id="qp" aria-label="수량 더하기">+</button></div></div>`;
-    $('#sOpts').querySelectorAll('input').forEach(r => r.addEventListener('change', calc));
+    $('#sOpts').querySelectorAll('input').forEach(r => r.addEventListener('change', () => { picks[+r.name.slice(1)] = +r.value; calc(); }));
     $('#qm').addEventListener('click', () => { qty = Math.max(1, qty-1); calc(); });
     $('#qp').addEventListener('click', () => { qty = Math.min(cur.kind==='used'?1:9, qty+1); calc(); });
+    $('#backBtn').hidden = true; $('#buyBtn').disabled = false; $('#buyBtn').textContent = '바로 구매하기';
+    $('#sHint').textContent = "아임웹 상품 옵션의 '추가 금액'으로 만들어요. 결제는 아임웹 쇼핑 결제로 이어져요.";
+    $('#sBreak').hidden = false; $('.sheet-f .total').hidden = false;
     calc();
-    scrim.hidden = false; document.body.style.overflow = 'hidden';
-    $('#closeSheet').focus();
+  }
+  function totals(){
+    let add = 0; const picked = [];
+    cur.opts.forEach((o,i) => { const c = o.c[picks[i]]; add += c[1]; picked.push(c); });
+    return {unit: cur.price + add, total: (cur.price + add) * qty, picked};
+  }
+  // 합계 숫자가 툭 바뀌지 않고 부드럽게 올라가거나 내려가요
+  let raf = 0;
+  function tweenTotal(to){
+    const el = $('#sTotal'), from = shownTotal; shownTotal = to;
+    cancelAnimationFrame(raf);
+    if (from === 0 || from === to || matchMedia('(prefers-reduced-motion: reduce)').matches){ el.innerHTML = `${won(to)}<small>원</small>`; return; }
+    el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+    const t0 = performance.now(), dur = 320;
+    const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.innerHTML = `${won(Math.round((from + (to - from) * e) / 10) * 10)}<small>원</small>`; if (k < 1) raf = requestAnimationFrame(step); else el.innerHTML = `${won(to)}<small>원</small>`; };
+    raf = requestAnimationFrame(step);
   }
   function calc(){
-    let add = 0; const picked = [];
-    cur.opts.forEach((o,i) => { const j = +document.querySelector(`input[name="o${i}"]:checked`).value; add += o.c[j][1]; if (o.c[j][1]) picked.push(`${o.c[j][0]} +${won(o.c[j][1])}`); });
-    const unit = cur.price + add, total = unit * qty;
+    const {total, picked} = totals();
     $('#qv').textContent = qty;
     $('#qm').disabled = qty <= 1;
     $('#qp').disabled = cur.kind === 'used' ? true : qty >= 9;
-    $('#sTotal').innerHTML = `${won(total)}<small>원</small>`;
-    $('#sBreak').textContent = `기본 ${won(cur.price)}원` + (picked.length ? ' · ' + picked.join(' · ') : '') + (qty > 1 ? ` · ${qty}대` : '') + (cur.kind==='used' ? ' · 중고는 1대씩 팔아요' : '');
+    tweenTotal(total);
+    const extra = picked.filter(c => c[1]).map(c => `${c[0]} +${won(c[1])}`);
+    $('#sBreak').textContent = `기본 ${won(cur.price)}원` + (extra.length ? ' · ' + extra.join(' · ') : '') + (qty > 1 ? ` · ${qty}대` : '') + (cur.kind==='used' ? ' · 중고는 1대씩 팔아요' : '');
+  }
+  function showCheckout(){
+    mode = 'co';
+    const {total, picked} = totals();
+    $('#sOpts').innerHTML = `
+      <div class="co">
+        <div class="co-sum"><b>${cur.name}${qty > 1 ? ` · ${qty}대` : ''}</b><span>${picked.map(c => c[0]).join(' · ')}</span></div>
+        <div class="og"><h4 id="payL">결제 수단</h4>
+          <div class="rchips" role="radiogroup" aria-labelledby="payL">${PAY.map((t,i) => `<label class="rc"><input type="radio" name="pay" value="${i}" ${i===payWay?'checked':''}><span>${t}</span></label>`).join('')}</div>
+        </div>
+        <div style="display:grid;gap:8px">
+          <div class="co-row"><span>상품 금액</span><strong class="num">${won(total)}원</strong></div>
+          <div class="co-row"><span>배송·설치</span><strong>${cur.kind==='used' ? '옵션에 포함' : '기본 설치 포함 (예시)'}</strong></div>
+          <div class="co-row"><span>설치 날짜</span><strong>결제 후 문자로 잡아요</strong></div>
+        </div>
+      </div>`;
+    $('#sOpts').querySelectorAll('input[name="pay"]').forEach(r => r.addEventListener('change', () => { payWay = +r.value; }));
+    $('#backBtn').hidden = false;
+    $('#buyBtn').textContent = `${won(total)}원 결제하기`;
+    $('#sBreak').hidden = true;
+    $('#sHint').textContent = '데모라 실제로 결제되지 않아요. 실제 사이트에서는 이 버튼을 누르면 아임웹 결제창(PG)이 열려요.';
+    $('#sOpts').scrollIntoView({block:'nearest'});
+    $('#sheet').scrollTop = 0;
+  }
+  function pay(){
+    const btn = $('#buyBtn'); btn.disabled = true; btn.innerHTML = '<span class="spin" aria-hidden="true"></span> 결제 확인 중';
+    $('#backBtn').hidden = true;
+    setTimeout(() => {
+      mode = 'done';
+      const d = new Date(), pad = n => String(n).padStart(2,'0');
+      const no = `HG-${String(d.getFullYear()).slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${String(30 + Math.floor(Math.random()*60)).padStart(3,'0')}`;
+      $('#sOpts').innerHTML = `
+        <div class="co-done" tabindex="-1" id="coDone">
+          <span class="check-pop" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+          <h4>주문이 들어갔어요</h4>
+          <div><span class="help">주문 번호 (예시)</span><div class="ono">${no}</div></div>
+          <p>${PAY[payWay]}로 ${$('#sTotal').textContent} 결제한 것으로 보여 드렸어요. 실제로는 결제가 끝나면 사장님께 주문 알림이 가고, 설치 날짜는 문자로 맞춰요.</p>
+        </div>`;
+      $('.sheet-f .total').hidden = true;
+      btn.disabled = false; btn.textContent = '닫기';
+      $('#sHint').textContent = '아임웹 쇼핑 결제 + 주문 알림으로 만들어요. 주문은 아임웹 관리자 > 주문 관리에서 봐요.';
+      $('#coDone').focus();
+    }, 900);
   }
   function closeSheet(){ scrim.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
   $('#closeSheet').addEventListener('click', closeSheet);
   scrim.addEventListener('click', e => { if (e.target === scrim) closeSheet(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !scrim.hidden) closeSheet(); });
-  $('#buyBtn').addEventListener('click', () => { closeSheet(); toast('데모예요. 실제 사이트에서는 아임웹 결제 화면으로 넘어가요'); });
+  $('#buyBtn').addEventListener('click', () => { if (mode === 'opt') showCheckout(); else if (mode === 'co') pay(); else closeSheet(); });
+  $('#backBtn').addEventListener('click', showOptions);
 
   // 토스트
   let tt; function toast(t){ $('#toastText').textContent = t; $('#toast').classList.add('on'); clearTimeout(tt); tt = setTimeout(() => $('#toast').classList.remove('on'), 2800); }
-  $('#callBtn').addEventListener('click', () => toast('데모라 전화가 연결되지 않아요. 실제 사이트에서는 바로 전화가 걸려요'));
+  const callToast = () => toast('데모라 전화가 연결되지 않아요. 실제 사이트에서는 바로 전화가 걸려요');
+  $('#callBtn').addEventListener('click', callToast);
+  $('#mbarCall').addEventListener('click', callToast);
+
+  // 휴대폰 하단 고정 버튼: 첫 화면을 지나면 나오고, 매입 신청 칸이 보이면 숨어요
+  const mbar = $('#mbar'); let pastHero = false, sellIn = false;
+  const setBar = () => mbar.classList.toggle('on', pastHero && !sellIn);
+  new IntersectionObserver(([en]) => { pastHero = !en.isIntersecting && en.boundingClientRect.top < 0; setBar(); }).observe($('.hero-main'));
+  new IntersectionObserver(([en]) => { sellIn = en.isIntersecting; setBar(); }, {rootMargin:'0px 0px -30% 0px'}).observe($('#sell'));
 
   // 메뉴 현재 위치
   const navs = [...document.querySelectorAll('[data-nav]')];
@@ -622,8 +778,45 @@ footer b{color:var(--ink-2)}
     $('#phCount').textContent = `${photos.length}/5`;
     phAdd.hidden = photos.length >= 5;
   }
-  // 데모용: 사진 없이도 눌러 볼 수 있게 예시 사진 넣기
-  window.__demoPhoto = () => { const c = document.createElement('canvas'); c.width = 160; c.height = 160; const g = c.getContext('2d'); g.fillStyle = '#DDE3EA'; g.fillRect(0,0,160,160); g.strokeStyle = '#8B95A1'; g.lineWidth = 4; g.strokeRect(40,20,80,120); g.beginPath(); g.moveTo(40,64); g.lineTo(120,64); g.stroke(); photos.push({url: c.toDataURL(), name:'예시.png'}); drawPhotos(); setErr('photo', false); };
+  // 데모용 예시 사진 3장 (정면 · 모델명 스티커 · 흠집) — 그림으로 그려요
+  function demoShot(kind){
+    const c = document.createElement('canvas'); c.width = 240; c.height = 240; const g = c.getContext('2d');
+    g.fillStyle = '#E3E7EC'; g.fillRect(0,0,240,240);
+    g.fillStyle = '#D3D9E0'; g.fillRect(0,190,240,50);
+    g.lineJoin = 'round'; g.lineCap = 'round';
+    if (kind === 'front'){
+      g.fillStyle = '#F7F8FA'; g.strokeStyle = '#8B95A1'; g.lineWidth = 4;
+      g.fillRect(40,24,160,178); g.strokeRect(40,24,160,178);
+      g.beginPath(); g.moveTo(120,24); g.lineTo(120,202); g.moveTo(40,112); g.lineTo(200,112); g.stroke();
+      g.lineWidth = 5; g.beginPath(); [[108,52,108,80],[132,52,132,80],[108,132,108,160],[132,132,132,160]].forEach(([a,b,x,y]) => { g.moveTo(a,b); g.lineTo(x,y); }); g.stroke();
+      g.fillStyle = '#8B95A1'; g.fillRect(48,202,10,14); g.fillRect(182,202,10,14);
+    } else if (kind === 'label'){
+      g.fillStyle = '#C9D0D8'; g.fillRect(0,0,240,240);
+      g.fillStyle = '#FFFFFF'; g.fillRect(28,52,184,136); g.strokeStyle = '#9AA3AE'; g.lineWidth = 2; g.strokeRect(28,52,184,136);
+      g.fillStyle = '#191F28'; g.font = '700 15px ui-monospace,Menlo,monospace'; g.fillText('MODEL  HK-1245RF', 42, 84);
+      g.fillStyle = '#4E5968'; g.font = '12px ui-monospace,Menlo,monospace'; g.fillText('220V 60Hz  1,100L', 42, 108); g.fillText('MFG 2021.06', 42, 128);
+      g.fillStyle = '#191F28'; for (let i = 0; i < 26; i++){ const w = (i * 7) % 3 + 1; g.fillRect(42 + i * 6, 144, w, 30); }
+    } else {
+      g.fillStyle = '#EEF1F4'; g.fillRect(0,0,240,240);
+      g.strokeStyle = '#B0B8C1'; g.lineWidth = 2; for (let y = 20; y < 240; y += 26){ g.beginPath(); g.moveTo(0,y); g.lineTo(240,y+6); g.stroke(); }
+      g.strokeStyle = '#6B7684'; g.lineWidth = 3; g.beginPath(); g.moveTo(60,150); g.quadraticCurveTo(110,120,170,96); g.moveTo(74,162); g.lineTo(150,124); g.stroke();
+      g.strokeStyle = '#E5484D'; g.lineWidth = 3; g.beginPath(); g.arc(116,128,58,0,Math.PI*2); g.stroke();
+    }
+    return c.toDataURL('image/png');
+  }
+  window.__demoPhoto = () => { photos.push({url: demoShot('front'), name:'예시.png'}); drawPhotos(); setErr('photo', false); };
+
+  $('#fillDemo').addEventListener('click', () => {
+    const set = (sel, v) => { const el = $(sel); el.value = v; el.dispatchEvent(new Event('input', {bubbles:true})); el.dispatchEvent(new Event('change', {bubbles:true})); };
+    const k = document.querySelector('#sellKinds input[value="업소용가전"]'); k.checked = true; k.dispatchEvent(new Event('change', {bubbles:true}));
+    set('#maker', '업소용 전문 브랜드'); set('#year', '2021년'); set('#model', 'HK-1245RF'); set('#price', '450000');
+    photos.forEach(p => URL.revokeObjectURL(p.url)); photos = ['front','label','scratch'].map((k,i) => ({url: demoShot(k), name:`예시${i+1}.png`})); drawPhotos();
+    set('#name', '김민수'); set('#tel', '01012345678'); set('#area', '충남');
+    $('#agree').checked = true;
+    ['kind','maker','year','model','photo','name','tel','area','agree'].forEach(k => setErr(k, false));
+    $('#submitBtn').scrollIntoView({block:'center'}); $('#submitBtn').focus({preventScroll:true});
+    toast("예시를 채웠어요. '매입 견적 받기'를 눌러 보세요");
+  });
 
   function setErr(k, on){ const e = $('#e-'+k); if (e) e.hidden = !on; const map = {maker:'#maker',year:'#year',model:'#model',name:'#name',tel:'#tel',area:'#area',agree:'#agree'}; if (map[k]) $(map[k]).setAttribute('aria-invalid', on); }
   ['maker','year','area'].forEach(k => $('#'+k).addEventListener('change', () => setErr(k, false)));
@@ -656,9 +849,16 @@ footer b{color:var(--ink-2)}
       $('#doneText').textContent = `${v.kind} ${v.model} 신청이 들어갔어요. 사진을 확인하고 ${masked} 번호로 매입 가능 금액을 문자로 알려 드릴게요.`;
       $('#sellForm').hidden = true; $('#done').hidden = false; $('#done').focus();
       btn.disabled = false; btn.textContent = '매입 견적 받기';
-      toast('매입 신청을 보냈어요');
+      setTimeout(showNoti, 450);
     }, 700);
   });
+  // 사장님 휴대폰에 오는 문자를 화면 위에서 내려오게 보여 줘요 (미리보기)
+  let nt;
+  function showNoti(){ const n = $('#noti'); n.classList.add('on'); clearTimeout(nt); nt = setTimeout(() => n.classList.remove('on'), 4800); }
+  function goAlerts(){ const a = $('.alerts'); a.scrollIntoView({block:'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); a.classList.remove('flash'); void a.offsetWidth; a.classList.add('flash'); }
+  $('#noti').addEventListener('click', () => { $('#noti').classList.remove('on'); goAlerts(); });
+  $('#seeAlert').addEventListener('click', goAlerts);
+
   $('#againBtn').addEventListener('click', () => {
     $('#sellForm').reset(); photos.forEach(p => URL.revokeObjectURL(p.url)); photos = []; drawPhotos();
     $('#priceHelp').textContent = '비워 두시면 상태를 보고 먼저 제안드려요.';

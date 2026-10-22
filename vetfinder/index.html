@@ -221,6 +221,38 @@ mark{background:var(--warn-bg);color:inherit;border-radius:3px;padding:0 1px}
 footer{margin-top:var(--sp-16);padding:var(--sp-8) 0 var(--sp-12);border-top:1px solid var(--line);font-size:var(--fs-13);color:var(--mut)}
 footer .wrap{display:grid;gap:6px}
 footer b{color:var(--ink-2)}
+/* 예시로 바로 해 보기 */
+.try{display:grid;gap:var(--sp-2);background:var(--brand-tint);border:1px dashed var(--brand-tint-2);border-radius:var(--r-md);padding:12px 12px 12px 14px}
+.try>span{font-size:var(--fs-13);color:var(--brand-text);font-weight:600}
+.try .row{display:flex;gap:var(--sp-2);flex-wrap:wrap}
+.try button{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--brand-tint-2);background:var(--card);font-size:var(--fs-13);font-weight:600;color:var(--ink-2)}
+.try button:hover{border-color:var(--brand);color:var(--brand-text)}
+.try button i{width:7px;height:7px;border-radius:50%;flex:none}
+/* 결과 아이콘 */
+.res-top{display:flex;align-items:center;gap:var(--sp-3)}
+.res-ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none;animation:pop .35s cubic-bezier(.2,.9,.3,1.3)}
+.res-ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;animation:drawck .4s .12s ease forwards}
+.result.ok .res-ic{background:var(--ok-bg);color:var(--ok)}
+.result.bad .res-ic{background:var(--bad-bg);color:var(--bad)}
+.result.warn .res-ic{background:var(--warn-bg);color:var(--warn)}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+@keyframes drawck{to{stroke-dashoffset:0}}
+.result{animation:rise .3s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+.hosp{transition:border-color .15s}
+.hosp:hover{border-color:#D5DAE0}
+.btn:active:not(:disabled){transform:scale(.98)}
+.res-list.swap .hosp{animation:rise .25s ease both}
+.search{padding:0 2px 0 14px}
+.search .clr{width:44px;height:44px}
+@media (max-width:640px){
+  .btn:where(:not(.btn-cta)){--h:44px}
+  .fchip,.seg button{height:44px}
+  .try button{min-height:44px}
+  /* 휴대폰: 제품 칩은 가로로 넘겨 필터 카드를 짧게 */
+  .filters .wrapchips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 calc(var(--sp-5) * -1);padding:2px var(--sp-5)}
+  .filters .wrapchips::-webkit-scrollbar{display:none}
+}
 </style>
 </head>
 <body>
@@ -296,6 +328,14 @@ footer b{color:var(--ink-2)}
     <div class="verify">
       <div class="card">
         <form class="form" id="vForm" novalidate>
+          <div class="try" role="group" aria-labelledby="tryL"><span id="tryL">예시 번호로 바로 해 보기 (데모 전용)</span>
+            <div class="row">
+              <button type="button" data-try="ok"><i style="background:var(--ok-dot)"></i>정품</button>
+              <button type="button" data-try="dup"><i style="background:var(--warn-dot)"></i>이미 등록한 번호</button>
+              <button type="button" data-try="mismatch"><i style="background:var(--warn-dot)"></i>제품과 다른 번호</button>
+              <button type="button" data-try="none"><i style="background:var(--bad-dot)"></i>목록에 없는 번호</button>
+            </div>
+          </div>
           <div class="field">
             <label class="label" for="vProd">제품<span class="req" aria-hidden="true">*</span></label>
             <select class="input" id="vProd" required></select>
@@ -356,7 +396,7 @@ footer b{color:var(--ink-2)}
               <path d="M248 92h8v8h-8zM268 92h8v8h-8zM248 112h8v8h-8zM264 108h4v4h-4zM272 116h4v4h-4z" fill="#C3CAD3"/>
             </svg>
           </div>
-          <p class="help">예시로 넣어 볼 번호: <code class="mono">SD24A031</code>(이어클린 정품), <code class="mono">SD25C207</code>(조인트 츄 정품), <code class="mono">SD24B112</code> + 010-1111-2222(이미 등록됨), <code class="mono">SD23Z999</code>(목록에 없음)</p>
+          <p class="help">직접 넣어 볼 예시 번호: <code class="mono">SD24A031</code>(이어클린), <code class="mono">SD25C207</code>(조인트 츄), <code class="mono">SD25D014</code>(더마 스프레이), <code class="mono">SD24E301</code>(덴탈 겔)</p>
         </div>
       </div>
     </div>
@@ -461,6 +501,8 @@ footer b{color:var(--ink-2)}
     const kw = q.value.trim();
     const list = H.filter(h => (!sido.value || h.sido === sido.value) && (!sgg.value || h.sgg === sgg.value) && (!kw || norm(h.name).includes(norm(kw))) && (prodF === 'ALL' || h.prods.includes(prodF)));
     const where = [sido.value, sgg.value].filter(Boolean).join(' ') || '전국';
+    $('#resetFind').hidden = !(sido.value || kw || prodF !== 'ALL');
+    const ulEl = $('#resList'); ulEl.classList.remove('swap'); void ulEl.offsetWidth; ulEl.classList.add('swap');
     $('#resTitle').innerHTML = `${esc(where)} 판매처 <b>${list.length}</b>곳`;
     $('#resSub').textContent = prodF === 'ALL' ? '모든 제품' : `'${short(prodF)}' 파는 곳`;
     const ul = $('#resList');
@@ -524,8 +566,9 @@ footer b{color:var(--ink-2)}
   const mask = t => t.replace(/^(\d{3})-(\d{2})\d{2}-(\d{2})\d{2}$/, '$1-$2**-$3**');
   function result(kind, title, body, rows){
     const chip = {ok:['ok','정품 확인'], bad:['bad','확인 안 됨'], warn:['warn','확인 필요']}[kind];
-    $('#vResult').innerHTML = `<div class="result ${kind}" tabindex="-1" id="resBox"><span class="chip ${chip[0]}">${chip[1]}</span><h3>${title}</h3>${body ? `<p>${body}</p>` : ''}${rows ? `<dl class="kv">${rows.map(([a,b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl>` : ''}</div>`;
-    const box = $('#resBox'); box.focus({preventScroll:true}); box.scrollIntoView({block:'nearest'});
+    const ic = {ok:'<path d="m5 12.5 4.5 4.5L19 7.5"/>', bad:'<path d="M7 7l10 10M17 7 7 17"/>', warn:'<path d="M12 6v8M12 18h.01"/>'}[kind];
+    $('#vResult').innerHTML = `<div class="result ${kind}" tabindex="-1" id="resBox"><div class="res-top"><span class="res-ic" aria-hidden="true"><svg viewBox="0 0 24 24">${ic}</svg></span><span class="chip ${chip[0]}">${chip[1]}</span></div><h3>${title}</h3>${body ? `<p>${body}</p>` : ''}${rows ? `<dl class="kv">${rows.map(([a,b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl>` : ''}</div>`;
+    const box = $('#resBox'); box.focus({preventScroll:true}); box.scrollIntoView({block:'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
   }
 
   $('#vForm').addEventListener('submit', e => {
@@ -562,6 +605,26 @@ footer b{color:var(--ink-2)}
       toast('정품 등록을 마쳤어요');
       drawSheet();
     }, 600);
+  });
+
+  // ---------- 예시로 바로 해 보기 (데모 전용) ----------
+  const back = n => { const d = new Date(today); d.setDate(d.getDate() - n); return ymd(d); };
+  const TRY = {
+    ok:{p:'EAR', lot:'SD24A031', tel:'010-2345-6789', how:'동물병원', d:12},
+    dup:{p:'JNT', lot:'SD24B112', tel:'010-1111-2222', how:'동물병원', d:10},
+    mismatch:{p:'DRM', lot:'SD25C207', tel:'010-3456-7890', how:'병원 연계 온라인몰', d:5},
+    none:{p:'EAR', lot:'SD23Z999', tel:'010-4567-8901', how:'기타', d:3}
+  };
+  document.querySelector('.try').addEventListener('click', e => {
+    const b = e.target.closest('[data-try]'); if (!b) return;
+    const t = TRY[b.dataset.try];
+    // 정품 예시는 누를 때마다 새 휴대폰 번호로 바꿔서 '이미 등록'에 걸리지 않게 해요
+    const tel = b.dataset.try === 'ok' ? `010-${String(2000 + Math.floor(Math.random()*7000))}-${String(1000 + Math.floor(Math.random()*9000))}` : t.tel;
+    vProd.value = t.p; vLot.value = t.lot; vDate.value = back(t.d); vTel.value = tel;
+    const r = document.querySelector(`input[name="vHow"][value="${t.how}"]`); r.checked = true; r.dispatchEvent(new Event('change'));
+    $('#vAgree').checked = true;
+    ['vProd','vLot','vDate','vTel','vHow','vAgree'].forEach(k => setErr(k, false));
+    const f = $('#vForm'); if (f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event('submit', {cancelable:true}));
   });
 
   // ---------- 관리 시트 미리보기 ----------

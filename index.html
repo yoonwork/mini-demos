@@ -1,1 +1,185 @@
-<!doctype html><meta charset="utf-8"><title>제안용 데모 모음</title><ul><li><a href="appliance/">가전 판매·매입 신청 데모</a><li><a href="vetfinder/">판매처 찾기·정품 확인 데모</a><li><a href="tarot/">타로 상담 리포트 데모</a></ul>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>제안용 데모 모음 · 가전 매입, 판매처 찾기, 타로 리포트</title>
+<meta name="description" content="아임웹 의뢰를 읽고 계약 전에 먼저 만들어 본 화면 3개예요. 모두 가상 브랜드와 예시 데이터예요.">
+<meta name="theme-color" content="#F4F1EC">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2317171A'/%3E%3Crect x='8' y='8' width='7' height='16' rx='2' fill='white'/%3E%3Crect x='17' y='8' width='7' height='7' rx='2' fill='white'/%3E%3Crect x='17' y='17' width='7' height='7' rx='2' fill='white' opacity='.55'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#F4F1EC; --paper:#FBFAF7; --ink:#17171A; --ink-2:#47464D; --mut:#6B6A70; --line:#DEDAD2;
+  --accent:#2457F5;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;word-break:keep-all;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 40px}
+@media (max-width:640px){.wrap{padding:0 16px}}
+
+.band{background:var(--ink);color:#fff;font-size:13px;text-align:center;padding:8px 16px;line-height:1.5}
+.band b{margin-right:6px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-top:20px;padding-bottom:20px}
+.top-line{border-bottom:1px solid var(--line)}
+.top .mk{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.top .mk i{width:22px;height:22px;border-radius:7px;background:var(--ink);display:block;position:relative}
+.top .mk i::after{content:"";position:absolute;left:5px;top:5px;width:5px;height:12px;border-radius:2px;background:var(--bg);box-shadow:7px 0 0 0 var(--bg)}
+.top small{font-size:13px;color:var(--mut);letter-spacing:.02em}
+
+.hero{padding:72px 0 56px;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(44px,9.2vw,128px);font-weight:800;letter-spacing:-.055em;line-height:1.02}
+.hero .sub{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;margin-top:40px}
+.hero .sub p{font-size:19px;color:var(--ink-2);max-width:620px}
+.hero .count{display:flex;gap:32px}
+.hero .count div{display:grid;justify-items:start}
+.hero .count b{font-size:56px;font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.hero .count span{font-size:13px;color:var(--mut);margin-top:6px}
+@media (max-width:760px){
+  .hero{padding:40px 0 36px}
+  .hero .sub{grid-template-columns:1fr;gap:24px;margin-top:24px}
+  .hero .sub p{font-size:16px}
+  .hero .count b{font-size:40px}
+}
+
+.list{border-bottom:1px solid var(--line)}
+.item{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px;align-items:center;padding:56px 0;border-top:1px solid var(--line);text-decoration:none}
+.item:first-child{border-top:0}
+.item .kicker{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mut);font-weight:500}
+.item .kicker i{width:12px;height:12px;border-radius:50%;background:var(--c);flex:none}
+.item h2{font-size:clamp(36px,5.4vw,72px);font-weight:800;letter-spacing:-.045em;line-height:1.05;margin-top:14px}
+.item .desc{font-size:18px;color:var(--ink-2);margin-top:16px;max-width:560px}
+.item .feats{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.item .feats li{font-size:14px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+.item .go{text-decoration:none;display:inline-flex;align-items:center;gap:10px;margin-top:32px;height:52px;padding:0 24px;border-radius:999px;background:var(--ink);color:#fff;font-size:16px;font-weight:600;transition:transform .2s,background-color .2s}
+.item .go span{font-size:13px;font-weight:500;opacity:.7;font-variant-numeric:tabular-nums}
+.item:hover .go{background:var(--c)}
+.item .go::after{content:"";position:absolute;inset:0;border-radius:24px}
+.item .pv{pointer-events:none}
+.item .go:focus-visible{outline-offset:4px}
+.item:active .go{transform:scale(.98)}
+
+.phone{position:relative;width:300px;height:620px;border-radius:44px;background:#1C1C20;padding:10px;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 30px 60px -30px rgba(23,23,26,.45);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.item:hover .phone{transform:translateY(-6px) rotate(-1deg)}
+.screen{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:#17171A}
+.screen iframe{position:absolute;z-index:1;left:0;top:30px;width:390px;height:846px;border:0;transform:scale(.718);transform-origin:0 0;pointer-events:none}
+.screen::after{content:"";position:absolute;left:50%;top:6px;width:80px;height:20px;border-radius:12px;background:#000;transform:translateX(-50%)}
+.screen .ph{position:absolute;inset:30px 0 0;display:grid;place-items:center;color:var(--mut);font-size:13px;background:var(--paper)}
+
+@media (max-width:900px){
+  .item{grid-template-columns:minmax(0,1fr) 220px;gap:28px}
+  .phone{width:220px;height:456px;border-radius:34px;padding:8px}
+  .screen{border-radius:27px}
+  .screen iframe{transform:scale(.523)}
+  .screen::after{width:60px;height:16px;top:5px}
+  .screen iframe{top:24px}
+  .screen .ph{top:24px}
+}
+@media (max-width:640px){
+  .item{grid-template-columns:minmax(0,1fr);gap:28px;padding:40px 0}
+  .item .desc{font-size:16px}
+  .item .go{width:100%;justify-content:center}
+  .item .pv{order:-1;display:flex;justify-content:center;background:var(--paper);border:1px solid var(--line);border-radius:28px;padding:28px 0 0;overflow:hidden;height:340px}
+  .phone{width:240px;height:497px;border-radius:36px}
+  .screen iframe{transform:scale(.564)}
+  .item:hover .phone{transform:none}
+}
+
+.how{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;padding:72px 0}
+.how h3{font-size:clamp(28px,3.4vw,44px);font-weight:800;letter-spacing:-.035em;line-height:1.15}
+.how dl{margin:0;display:grid}
+.how dl div{display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;padding:18px 0;border-top:1px solid var(--line)}
+.how dl div:last-child{border-bottom:1px solid var(--line)}
+.how dt{font-weight:700}
+.how dd{margin:0;color:var(--ink-2)}
+@media (max-width:760px){.how{grid-template-columns:1fr;gap:24px;padding:48px 0}.how dl div{grid-template-columns:1fr;gap:4px}}
+
+footer{padding:48px 0 64px;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
+footer .word{font-size:clamp(48px,13vw,180px);font-weight:800;letter-spacing:-.06em;line-height:.9;color:var(--ink);opacity:.08;margin-bottom:24px;user-select:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="band" role="note"><b>제안용 데모 · 예시</b>여기 있는 브랜드·상품·병원·주문은 모두 지어낸 예시예요. 실제 납품 사례가 아니에요.</div>
+
+<header class="top-line"><div class="wrap top">
+  <span class="mk"><i aria-hidden="true"></i>데모 모음</span>
+  <small>아임웹 의뢰 3건</small>
+</div></header>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="h">
+    <h1 id="h">의뢰서를 읽고<br>먼저 만들어 본 화면</h1>
+    <div class="sub">
+      <p>말로 설명하는 것보다 직접 눌러 보시는 게 빠를 것 같아서, 의뢰마다 핵심 기능을 작은 화면으로 먼저 만들었어요. 휴대폰으로 열어도 그대로 눌러 볼 수 있어요.</p>
+      <div class="count" aria-label="데모 구성">
+        <div><b>3</b><span>의뢰마다 하나씩</span></div>
+      </div>
+    </div>
+  </section>
+
+  <ul class="list">
+    <li>
+      <div class="item" style="--c:#2457F5">
+        <div>
+          <p class="kicker"><i aria-hidden="true"></i>가전 판매·매입 홈페이지</p>
+          <h2>한결가전</h2>
+          <p class="desc">옵션을 고르면 가격이 바로 바뀌고, 매입 신청을 보내면 사장님 휴대폰에 어떤 알림이 가는지까지 보여 드려요.</p>
+          <ul class="feats"><li>새상품·중고 &gt; 품목</li><li>옵션별 가격·결제 단계</li><li>사진 매입 신청</li><li>문자·메일 알림</li></ul>
+          <a class="go" href="appliance/">데모 열어 보기 <span>appliance/</span></a>
+        </div>
+        <div class="pv" aria-hidden="true"><div class="phone"><div class="screen"><span class="ph">불러오는 중</span><iframe src="appliance/index.html" title="한결가전 데모 미리보기" loading="lazy" tabindex="-1"></iframe></div></div></div>
+      </div>
+    </li>
+    <li>
+      <div class="item" style="--c:#12804C">
+        <div>
+          <p class="kicker"><i aria-hidden="true"></i>동물병원 판매처 찾기 · 정품 확인</p>
+          <h2>솔담벳</h2>
+          <p class="desc">지역과 병원 이름으로 판매처를 찾고, 포장의 LOT 번호로 정품인지 확인해 등록해요. 담당자는 구글 시트만 고치면 돼요.</p>
+          <ul class="feats"><li>시/도 · 시/군/구 · 병원명</li><li>LOT 대조·중복 등록 막기</li><li>관리 시트 미리보기</li></ul>
+          <a class="go" href="vetfinder/">데모 열어 보기 <span>vetfinder/</span></a>
+        </div>
+        <div class="pv" aria-hidden="true"><div class="phone"><div class="screen"><span class="ph">불러오는 중</span><iframe src="vetfinder/index.html" title="솔담벳 데모 미리보기" loading="lazy" tabindex="-1"></iframe></div></div></div>
+      </div>
+    </li>
+    <li>
+      <div class="item" style="--c:#5B4A82">
+        <div>
+          <p class="kicker"><i aria-hidden="true"></i>타로 리딩 주문 · 운영자 작업실</p>
+          <h2>고요서재</h2>
+          <p class="desc">고객이 질문을 남기고 결제하면, 운영자가 카드 아홉 장을 뽑아 기록하고 초안을 다듬어 PDF 리포트로 보내요. 초안은 미리 써 둔 예시 문장이에요.</p>
+          <ul class="feats"><li>질문·상품 고르기</li><li>78장 중 9장 추출·잠금</li><li>A4 리포트 미리보기</li></ul>
+          <a class="go" href="tarot/">데모 열어 보기 <span>tarot/</span></a>
+        </div>
+        <div class="pv" aria-hidden="true"><div class="phone"><div class="screen"><span class="ph">불러오는 중</span><iframe src="tarot/index.html" title="고요서재 데모 미리보기" loading="lazy" tabindex="-1"></iframe></div></div></div>
+      </div>
+    </li>
+  </ul>
+
+  <section class="how" aria-labelledby="howT">
+    <h3 id="howT">데모와 실제 사이트는<br>이렇게 달라요</h3>
+    <dl>
+      <div><dt>화면</dt><dd>데모는 HTML 한 장이에요. 실제로는 아임웹 페이지·상품·입력폼과 코드 위젯으로 옮겨요.</dd></div>
+      <div><dt>데이터</dt><dd>데모는 화면 안 예시 목록을 써요. 실제로는 아임웹 관리자나 고객사 구글 시트에 쌓여요.</dd></div>
+      <div><dt>결제·알림</dt><dd>데모에서는 아무것도 보내지 않아요. 실제로는 아임웹 결제(PG)와 문자·메일 알림을 연결해요.</dd></div>
+    </dl>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="word" aria-hidden="true">mini demos</p>
+    <p>입력한 내용은 이 브라우저 안에서만 쓰이고 어디로도 보내지 않아요.</p>
+  </div>
+</footer>
+</body>
+</html>
